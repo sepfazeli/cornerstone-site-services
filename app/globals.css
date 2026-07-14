@@ -119,6 +119,11 @@ body {
   background-size: 100% 1px;
 }
 
+/* ---- before/after handle ---- */
+.ba-clip {
+  clip-path: inset(0 calc(100% - var(--ba, 50%)) 0 0);
+}
+
 /* ---- grain texture ---- */
 .grain::before {
   content: "";
