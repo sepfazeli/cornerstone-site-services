@@ -36,11 +36,19 @@ function Slider({ src, alt }: { src: string; alt: string }) {
       onPointerMove={(e) => {
         if (e.buttons > 0) move(e.clientX);
       }}
+      onDragStart={(e) => e.preventDefault()}
       className="group relative aspect-[4/3] cursor-ew-resize touch-pan-y overflow-hidden rounded-3xl border border-clay-500/20 shadow-xl shadow-espresso-900/10 select-none"
       style={{ "--ba": `${pos}%` } as React.CSSProperties}
     >
       {/* AFTER (base) */}
-      <Image src={src} alt={`${alt} — after cleaning`} fill sizes="(min-width:1024px) 45vw, 92vw" className="object-cover" />
+      <Image
+        src={src}
+        alt={`${alt} — after cleaning`}
+        fill
+        draggable={false}
+        sizes="(min-width:1024px) 45vw, 92vw"
+        className="pointer-events-none object-cover"
+      />
       {/* BEFORE (clipped, simulated grime) */}
       <div className="ba-clip absolute inset-0">
         <Image
@@ -48,8 +56,9 @@ function Slider({ src, alt }: { src: string; alt: string }) {
           alt=""
           aria-hidden
           fill
+          draggable={false}
           sizes="(min-width:1024px) 45vw, 92vw"
-          className="object-cover brightness-[0.62] contrast-[0.88] saturate-[0.55] sepia-[0.35]"
+          className="pointer-events-none object-cover brightness-[0.62] contrast-[0.88] saturate-[0.55] sepia-[0.35]"
         />
       </div>
       {/* handle */}
