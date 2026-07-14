@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cornerstone Site Services
 
-## Getting Started
+Marketing site for **Cornerstone Site Services** — pressure washing, exterior soft-wash and mobile auto detailing across Los Angeles & Orange County. *One call. Everything handled.*
 
-First, run the development server:
+**Stack:** Next.js 16 (App Router, static-first) · Tailwind CSS v4 · TypeScript
+
+## Features
+
+- **Photo quote flow** — customers upload up to 5 photos (drag & drop, previews), pick services and a plan, and submit. Requests hit `/api/quote`.
+- **Time-slot booking** — 12-day rolling calendar (Sundays closed) with 5 daily windows; requested slot is included in the quote request and confirmed by text.
+- **Subscription positioning** — one-time deep clean vs. Estate Care Plan vs. Auto Care Membership.
+- **SEO** — per-page metadata, `LocalBusiness` + `FAQPage` JSON-LD, sitemap, robots, semantic headings, service-area content, dedicated `/pressure-washing` and `/auto-detailing` landing pages.
+- **Design** — brand palette drawn from the logo (cream / terracotta / espresso), Playfair Display + Inter, scroll-reveal motion, Ken Burns hero, draggable before/after sliders, marquee trust strip. Honors `prefers-reduced-motion`.
+
+## Develop
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables (all optional)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy `.env.example` to `.env.local`. Without email config, quote requests are logged to the server console (view with `vercel logs` in production).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Var | Purpose |
+| --- | --- |
+| `RESEND_API_KEY` | Enables emailing quote requests via Resend |
+| `QUOTE_INBOX_EMAIL` | Where quote requests are sent |
+| `QUOTE_FROM_EMAIL` | Verified Resend sender address |
+| `NEXT_PUBLIC_SITE_URL` | Canonical URL once a custom domain is attached |
 
-## Learn More
+## Deploy
 
-To learn more about Next.js, take a look at the following resources:
+Deployed on Vercel. `vercel --prod` from the repo root.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Photos are from Unsplash (free license). Before/after sliders are labeled as illustrative — replace with real job photos as they come in (`public/images`).

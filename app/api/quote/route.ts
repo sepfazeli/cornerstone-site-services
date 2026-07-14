@@ -1,0 +1,87 @@
+import { NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+
+// Email attachments are capped well below the platform request limit.
+const MAX_ATTACH_BYTES = 3 * 1024 * 1024;
+
+export async function POST(req: Request) {
+  let form: FormData;
+  try {
+    form = await req.formData();
+  } catch {
+    return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
+  }
+
+  const field = (k: string) => (form.get(k)?.toString() ?? "").slice(0, 500);
+  const name = field("name");
+  const phone = field("phone");
+  if (!name || !phone) {
+    return NextResponse.json({ error: "Name and phone are required" }, { status: 400 });
+  }
+
+  const photos = [...form.entries()]
+    .filter((entry): entry is [string, File] => entry[0].startsWith("photo-") && entry[1] instanceof File)
+    .map(([, f]) => f);
+
+  const summary = {
+    name,
+    phone,
+    email: field("email"),
+    area: field("area"),
+    services: field("services"),
+    plan: field("plan"),
+    slot: [field("slotDay"), field("slotTime")].filter(Boolean).join(" at ") || "none requested",
+    notes: field("notes"),
+    photoCount: photos.length,
+    receivedAt: new Date().toISOString(),
+  };
+
+  console.log("[quote-request]", JSON.stringify(summary));
+
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.QUOTE_INBOX_EMAIL;
+  if (apiKey && to) {
+    try {
+      let attachTotal = 0;
+      const attachments: { filename: string; content: string }[] = [];
+      for (const p of photos) {
+        attachTotal += p.size;
+        if (attachTotal > MAX_ATTACH_BYTES) break;
+        attachments.push({
+          filename: p.name,
+          content: Buffer.from(await p.arrayBuffer()).toString("base64"),
+        });
+      }
+      const html = `
+        <h2>New quote request — ${summary.name}</h2>
+        <p><b>Phone:</b> ${summary.phone}<br/>
+        <b>Email:</b> ${summary.email || "—"}<br/>
+        <b>Area:</b> ${summary.area}<br/>
+        <b>Services:</b> ${summary.services}<br/>
+        <b>Plan:</b> ${summary.plan}<br/>
+        <b>Requested slot:</b> ${summary.slot}<br/>
+        <b>Photos:</b> ${summary.photoCount} uploaded${attachments.length < photos.length ? " (some too large to attach)" : ""}</p>
+        <p>${summary.notes || ""}</p>`;
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: process.env.QUOTE_FROM_EMAIL ?? "quotes@cornerstonesiteservices.com",
+          to: [to],
+          reply_to: summary.email || undefined,
+          subject: `Quote request: ${summary.name} · ${summary.area} · ${summary.services}`,
+          html,
+          attachments,
+        }),
+      });
+      if (!res.ok) {
+        console.error("[quote-request] Resend error", res.status, await res.text());
+      }
+    } catch (err) {
+      console.error("[quote-request] email dispatch failed", err);
+    }
+  }
+
+  return NextResponse.json({ ok: true });
+}
