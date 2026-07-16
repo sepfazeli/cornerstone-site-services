@@ -200,29 +200,3 @@ export const testimonials = [
   },
 ] as const;
 
-export const faqs = [
-  {
-    q: "How does the photo quote work?",
-    a: "Snap 3–5 photos of the areas you want cleaned (driveway, windows, roof, car) and upload them with our quote form — or text them straight to (949) 994-1833. We size the job from the photos and reply with a firm quote, usually within 2 business hours. No site visit, no waiting around.",
-  },
-  {
-    q: "Which areas do you serve?",
-    a: "We're Orange County based and cover the whole county — Irvine, Newport Beach, Costa Mesa, Huntington Beach, Anaheim, Mission Viejo, San Clemente and everywhere between. Not sure? Send your zip with the quote form.",
-  },
-  {
-    q: "What's the difference between one-time and a care plan?",
-    a: "A one-time deep clean is a full reset in a single visit. Care plans start with that same deep clean, then keep everything maintained on a schedule you pick — weekly to quarterly — at a lower per-visit rate, with priority scheduling included.",
-  },
-  {
-    q: "Is washing safe for my roof, stucco and plants?",
-    a: "Yes — we match the method to the surface. Roofs and facades get low-pressure soft washing with biodegradable detergents, hardscape gets calibrated surface cleaners, and we pre-soak and rinse landscaping so plants are protected.",
-  },
-  {
-    q: "Do you really detail cars at my home?",
-    a: "We do. Our rigs carry water and power, so we work in your driveway or office parking. Interior deep cleans, hand wash and polish, and ceramic packages — without you driving anywhere.",
-  },
-  {
-    q: "What happens after I book a time slot?",
-    a: "Your slot is reserved as a request the moment you submit. We confirm by text within 2 business hours with your quote attached. Nothing is charged until the work is scheduled and approved.",
-  },
-] as const;

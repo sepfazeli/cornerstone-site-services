@@ -41,7 +41,6 @@ export default function Footer() {
                 ["/pressure-washing", "Power Washing OC"],
                 ["/auto-detailing", "Mobile Auto Detailing OC"],
                 ["/#quote", "Photo Quote & Booking"],
-                ["/#faq", "FAQ"],
               ].map(([href, label]) => (
                 <li key={href}>
                   <Link href={href} className="link-line text-cream-100/90 hover:text-cream-50">
