@@ -82,36 +82,10 @@ export async function POST(req: Request) {
       if (!res.ok) {
         console.error("[quote-request] Resend error", res.status, await res.text());
       }
-    } else {
-      // Default path: FormSubmit relay — free, no API key. The inbox owner
-      // clicks the one-time activation link FormSubmit sends on first use;
-      // every submission after that is delivered straight to the inbox.
-      const res = await fetch(`https://formsubmit.co/ajax/${INBOX}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          _subject: `Quote request: ${summary.name} · ${summary.services}`,
-          _template: "table",
-          Name: summary.name,
-          Phone: summary.phone,
-          Email: summary.email || "—",
-          Address: summary.address || "—",
-          Services: summary.services,
-          "Requested slot": summary.slot,
-          "Heard about us": summary.hearAbout || "—",
-          "SMS consent": summary.smsConsent,
-          "Photos uploaded": String(summary.photoCount) + (summary.photoCount > 0 ? " (text the customer for originals, or set RESEND_API_KEY to receive attachments)" : ""),
-          Notes: summary.notes || "—",
-          "Received at": summary.receivedAt,
-        }),
-      });
-      const body = await res.text();
-      if (!res.ok) {
-        console.error("[quote-request] FormSubmit error", res.status, body);
-      } else {
-        console.log("[quote-request] FormSubmit accepted", body.slice(0, 200));
-      }
     }
+    // Without RESEND_API_KEY, inbox delivery happens client-side via the
+    // FormSubmit relay (its Cloudflare front rejects datacenter IPs, so it
+    // cannot be called from here). This handler still logs every request.
   } catch (err) {
     console.error("[quote-request] email dispatch failed", err);
   }

@@ -105,8 +105,38 @@ export default function QuoteForm() {
       fd.set("slotDay", day);
       fd.set("slotTime", time);
       previews.forEach((p, i) => fd.append(`photo-${i}`, p.file, p.file.name));
-      const res = await fetch("/api/quote", { method: "POST", body: fd });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      // Two deliveries in parallel: our API (logs + Resend attachments when
+      // configured) and the FormSubmit inbox relay, which must be called from
+      // the browser — its Cloudflare front blocks datacenter IPs. Skipped in
+      // dev so the one-time activation stays tied to the production domain.
+      const apiCall = fetch("/api/quote", { method: "POST", body: fd });
+      const relayCall =
+        process.env.NODE_ENV === "production"
+          ? fetch(`https://formsubmit.co/ajax/${site.email}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Accept: "application/json" },
+              body: JSON.stringify({
+                _subject: `Quote request: ${fd.get("name")} · ${selectedServices.join(", ")}`,
+                _template: "table",
+                Name: fd.get("name"),
+                Phone: fd.get("phone"),
+                Email: fd.get("email") || "—",
+                Address: fd.get("address") || "—",
+                Services: selectedServices.join(", "),
+                "Requested slot": day ? `${day}${time ? ` at ${time}` : ""}` : "none requested",
+                "Heard about us": fd.get("hearAbout") || "—",
+                "SMS consent": fd.get("smsConsent") === "yes" ? "yes" : "no",
+                "Photos uploaded": String(previews.length),
+                Notes: fd.get("notes") || "—",
+              }),
+            })
+          : Promise.resolve(null);
+
+      const [apiRes, relayRes] = await Promise.allSettled([apiCall, relayCall]);
+      const apiOk = apiRes.status === "fulfilled" && apiRes.value.ok;
+      const relayOk = relayRes.status === "fulfilled" && (relayRes.value?.ok ?? false);
+      if (!apiOk && !relayOk) throw new Error("both deliveries failed");
       setStatus("done");
       previews.forEach((p) => URL.revokeObjectURL(p.url));
     } catch {
