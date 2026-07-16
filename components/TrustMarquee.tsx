@@ -23,7 +23,7 @@ export default function TrustMarquee() {
             className="display-flat flex items-center gap-10 text-lg tracking-[0.18em] text-cream-50"
           >
             {t}
-            <span className="text-pink-200">🌴</span>
+            <span className="text-pink-200">✦</span>
           </span>
         ))}
       </div>

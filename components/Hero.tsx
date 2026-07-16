@@ -2,6 +2,7 @@ import Image from "next/image";
 import Palm from "./Palm";
 import Reveal from "./Reveal";
 import QuoteForm from "./QuoteForm";
+import { PhoneIcon } from "./Icons";
 import { site } from "@/lib/site";
 
 export default function Hero() {
@@ -12,51 +13,52 @@ export default function Hero() {
       <Palm className="animate-sway pointer-events-none absolute -right-10 top-40 h-32 w-auto origin-bottom -scale-x-100 text-azure-300/50 lg:h-48 [animation-delay:1.2s]" />
 
       <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-20 pt-10 lg:grid-cols-[1fr_1.05fr] lg:gap-14 lg:px-8">
-        {/* left: photos */}
-        <div className="relative hidden lg:block">
-          <div className="sticky top-28 space-y-6">
-            <Reveal>
-              <div className="sticker relative aspect-[4/3] -rotate-1 overflow-hidden bg-cream-100">
+        {/* left: photo column stretches to match the form column */}
+        <div className="hidden lg:flex lg:flex-col lg:gap-6">
+          <Reveal className="flex-1">
+            <div className="sticker relative h-full min-h-[480px] -rotate-1 overflow-hidden bg-cream-100">
+              <Image
+                src="/images/home-2.jpg"
+                alt="Freshly washed Orange County home with pool at dusk"
+                fill
+                priority
+                sizes="(min-width:1024px) 45vw, 92vw"
+                className="object-cover"
+              />
+              <span className="display-flat absolute bottom-4 left-4 rounded-lg border-2 border-azure-600 bg-pink-300 px-3 py-1 text-sm tracking-[0.18em] text-azure-800 uppercase">
+                Orange County, CA
+              </span>
+            </div>
+          </Reveal>
+          <div className="grid shrink-0 grid-cols-2 gap-6">
+            <Reveal delay={120}>
+              <div className="sticker relative aspect-[5/4] rotate-1 overflow-hidden bg-cream-100">
                 <Image
-                  src="/images/home-2.jpg"
-                  alt="Freshly washed Orange County home with pool at dusk"
+                  src="/images/detail-wax.jpg"
+                  alt="Detailer polishing a car hood"
                   fill
-                  priority
-                  sizes="(min-width:1024px) 45vw, 92vw"
+                  sizes="22vw"
                   className="object-cover"
                 />
               </div>
             </Reveal>
-            <div className="grid grid-cols-2 gap-6">
-              <Reveal delay={120}>
-                <div className="sticker relative aspect-square rotate-1 overflow-hidden bg-cream-100">
-                  <Image
-                    src="/images/detail-wax.jpg"
-                    alt="Detailer polishing a car hood"
-                    fill
-                    sizes="22vw"
-                    className="object-cover"
-                  />
-                </div>
-              </Reveal>
-              <Reveal delay={220}>
-                <div className="sticker relative aspect-square -rotate-2 overflow-hidden bg-cream-100">
-                  <Image
-                    src="/images/street-clean.jpg"
-                    alt="Crew power washing pavement"
-                    fill
-                    sizes="22vw"
-                    className="object-cover"
-                  />
-                </div>
-              </Reveal>
-            </div>
-            <Reveal delay={300}>
-              <p className="display-flat rotate-1 text-center text-2xl tracking-wider text-pink-500">
-                {site.tagline}
-              </p>
+            <Reveal delay={220}>
+              <div className="sticker relative aspect-[5/4] -rotate-2 overflow-hidden bg-cream-100">
+                <Image
+                  src="/images/street-clean.jpg"
+                  alt="Crew power washing pavement"
+                  fill
+                  sizes="22vw"
+                  className="object-cover"
+                />
+              </div>
             </Reveal>
           </div>
+          <Reveal delay={300}>
+            <p className="display-flat shrink-0 rotate-1 text-center text-2xl tracking-wider text-pink-500">
+              {site.tagline}
+            </p>
+          </Reveal>
         </div>
 
         {/* right: headline + form */}
@@ -81,8 +83,8 @@ export default function Hero() {
               href={`tel:${site.phone}`}
               className="mt-5 inline-flex items-center gap-3 text-azure-500 hover:text-azure-400"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border-3 border-pink-300 bg-pink-200 text-xl">
-                ☎
+              <span className="flex h-11 w-11 items-center justify-center rounded-full border-3 border-pink-300 bg-pink-200 text-azure-600">
+                <PhoneIcon className="h-5 w-5" />
               </span>
               <span className="display-flat text-3xl tracking-wider">{site.phoneDisplay}</span>
             </a>

@@ -1,8 +1,10 @@
 import Hero from "@/components/Hero";
 import TrustMarquee from "@/components/TrustMarquee";
+import FeatureCards from "@/components/FeatureCards";
 import Services from "@/components/Services";
 import Promise from "@/components/Promise";
 import BeforeAfter from "@/components/BeforeAfter";
+import GalleryStrip from "@/components/GalleryStrip";
 import Plans from "@/components/Plans";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
@@ -27,9 +29,11 @@ export default function Home() {
       />
       <Hero />
       <TrustMarquee />
+      <FeatureCards />
       <Services />
       <Promise />
       <BeforeAfter />
+      <GalleryStrip />
       <Plans />
       <Testimonials />
       <FAQ />

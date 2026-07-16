@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useMemo, useRef, useState } from "react";
+import { CameraIcon } from "./Icons";
 import { site, services, frequencies, hearAboutOptions } from "@/lib/site";
 
 const SLOT_TIMES = ["8:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"];
@@ -215,7 +216,7 @@ export default function QuoteForm() {
           >
             {previews.length === 0 && (
               <p className="w-full text-center text-sm font-semibold text-azure-700/60">
-                <span className="mb-1 block text-2xl">📷</span>
+                <CameraIcon className="mx-auto mb-1.5 h-8 w-8 text-azure-500" />
                 Tap to add photos, or drag &amp; drop
               </p>
             )}
@@ -271,8 +272,8 @@ export default function QuoteForm() {
             </span>
           ))}
           {previews.length > 0 && (
-            <span className="rounded-full border-2 border-pink-300 bg-cream-50 px-3 py-1 text-xs font-bold text-azure-600">
-              📷 {previews.length} photo{previews.length > 1 ? "s" : ""}
+            <span className="inline-flex items-center gap-1.5 rounded-full border-2 border-pink-300 bg-cream-50 px-3 py-1 text-xs font-bold text-azure-600">
+              <CameraIcon className="h-3.5 w-3.5" /> {previews.length} photo{previews.length > 1 ? "s" : ""}
             </span>
           )}
         </div>
