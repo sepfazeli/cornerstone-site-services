@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 // Email attachments are capped well below the platform request limit.
 const MAX_ATTACH_BYTES = 3 * 1024 * 1024;
 
-const DEFAULT_INBOX = "cstone.services.co@gmail.com";
+const INBOX = process.env.QUOTE_INBOX_EMAIL ?? "cstone.services.co@gmail.com";
 
 export async function POST(req: Request) {
   let form: FormData;
@@ -31,9 +31,7 @@ export async function POST(req: Request) {
     phone,
     email: field("email"),
     address: field("address"),
-    zip: field("zip"),
     services: field("services"),
-    frequency: field("frequency"),
     hearAbout: field("hearAbout"),
     smsConsent: field("smsConsent") === "yes" ? "yes" : "no",
     slot: [field("slotDay"), field("slotTime")].filter(Boolean).join(" at ") || "none requested",
@@ -45,9 +43,9 @@ export async function POST(req: Request) {
   console.log("[quote-request]", JSON.stringify(summary));
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.QUOTE_INBOX_EMAIL ?? DEFAULT_INBOX;
-  if (apiKey) {
-    try {
+  try {
+    if (apiKey) {
+      // Preferred path: Resend, with photo attachments.
       let attachTotal = 0;
       const attachments: { filename: string; content: string }[] = [];
       for (const p of photos) {
@@ -62,11 +60,10 @@ export async function POST(req: Request) {
         <h2>New quote request — ${summary.name}</h2>
         <p><b>Phone:</b> ${summary.phone}<br/>
         <b>Email:</b> ${summary.email || "—"}<br/>
-        <b>Address:</b> ${summary.address} · ${summary.zip}<br/>
+        <b>Address:</b> ${summary.address || "—"}<br/>
         <b>Services:</b> ${summary.services}<br/>
-        <b>Frequency:</b> ${summary.frequency}<br/>
         <b>Requested slot:</b> ${summary.slot}<br/>
-        <b>Heard about us via:</b> ${summary.hearAbout}<br/>
+        <b>Heard about us via:</b> ${summary.hearAbout || "—"}<br/>
         <b>SMS consent:</b> ${summary.smsConsent}<br/>
         <b>Photos:</b> ${summary.photoCount} uploaded${attachments.length < photos.length ? " (some too large to attach)" : ""}</p>
         <p>${summary.notes || ""}</p>`;
@@ -75,9 +72,9 @@ export async function POST(req: Request) {
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           from: process.env.QUOTE_FROM_EMAIL ?? "quotes@cornerstonesiteservices.com",
-          to: [to],
+          to: [INBOX],
           reply_to: summary.email || undefined,
-          subject: `Quote request: ${summary.name} · ${summary.zip} · ${summary.services}`,
+          subject: `Quote request: ${summary.name} · ${summary.services}`,
           html,
           attachments,
         }),
@@ -85,9 +82,38 @@ export async function POST(req: Request) {
       if (!res.ok) {
         console.error("[quote-request] Resend error", res.status, await res.text());
       }
-    } catch (err) {
-      console.error("[quote-request] email dispatch failed", err);
+    } else {
+      // Default path: FormSubmit relay — free, no API key. The inbox owner
+      // clicks the one-time activation link FormSubmit sends on first use;
+      // every submission after that is delivered straight to the inbox.
+      const res = await fetch(`https://formsubmit.co/ajax/${INBOX}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: `Quote request: ${summary.name} · ${summary.services}`,
+          _template: "table",
+          Name: summary.name,
+          Phone: summary.phone,
+          Email: summary.email || "—",
+          Address: summary.address || "—",
+          Services: summary.services,
+          "Requested slot": summary.slot,
+          "Heard about us": summary.hearAbout || "—",
+          "SMS consent": summary.smsConsent,
+          "Photos uploaded": String(summary.photoCount) + (summary.photoCount > 0 ? " (text the customer for originals, or set RESEND_API_KEY to receive attachments)" : ""),
+          Notes: summary.notes || "—",
+          "Received at": summary.receivedAt,
+        }),
+      });
+      const body = await res.text();
+      if (!res.ok) {
+        console.error("[quote-request] FormSubmit error", res.status, body);
+      } else {
+        console.log("[quote-request] FormSubmit accepted", body.slice(0, 200));
+      }
     }
+  } catch (err) {
+    console.error("[quote-request] email dispatch failed", err);
   }
 
   return NextResponse.json({ ok: true });

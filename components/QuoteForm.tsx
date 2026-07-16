@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useMemo, useRef, useState } from "react";
 import { CameraIcon } from "./Icons";
-import { site, services, frequencies, hearAboutOptions } from "@/lib/site";
+import { site, services, hearAboutOptions } from "@/lib/site";
 
 const SLOT_TIMES = ["8:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"];
 const MAX_PHOTOS = 5;
@@ -346,24 +346,12 @@ export default function QuoteForm() {
           )}
         </fieldset>
 
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <label className="block">
-            <span className={labelCls}>How often?</span>
-            <select name="frequency" defaultValue="One-time" className={inputCls}>
-              {frequencies.map((f) => (
-                <option key={f} value={f}>
-                  {f}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block">
-            <span className={labelCls}>
-              Email <span className="font-semibold normal-case text-azure-700/50">(optional)</span>
-            </span>
-            <input name="email" type="email" autoComplete="email" placeholder="alex@email.com" className={inputCls} />
-          </label>
-        </div>
+        <label className="mt-4 block">
+          <span className={labelCls}>
+            Email <span className="font-semibold normal-case text-azure-700/50">(optional)</span>
+          </span>
+          <input name="email" type="email" autoComplete="email" placeholder="alex@email.com" className={inputCls} />
+        </label>
 
         <details className="mt-4">
           <summary className="cursor-pointer text-xs font-bold tracking-wide text-azure-600/70 uppercase">

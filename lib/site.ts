@@ -110,15 +110,6 @@ export const services: {
   },
 ];
 
-export const frequencies = [
-  "One-time",
-  "Weekly",
-  "Bi-weekly",
-  "Monthly",
-  "Quarterly",
-  "Twice a year",
-] as const;
-
 export const hearAboutOptions = [
   "Google search",
   "Instagram / TikTok",
