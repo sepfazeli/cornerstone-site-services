@@ -23,12 +23,15 @@ function nextDays(count: number) {
 
 export default function QuoteForm() {
   const days = useMemo(() => nextDays(10), []);
+  const [step, setStep] = useState<1 | 2>(1);
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [day, setDay] = useState<string>("");
   const [time, setTime] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const fileInput = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   function addFiles(list: FileList | null) {
     if (!list) return;
@@ -53,26 +56,50 @@ export default function QuoteForm() {
   }
 
   function toggleService(title: string) {
+    setError("");
     setSelectedServices((prev) =>
       prev.includes(title) ? prev.filter((k) => k !== title) : [...prev, title]
     );
   }
 
+  function scrollToForm() {
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function goNext() {
+    if (selectedServices.length === 0) {
+      setError("Pick at least one service to continue.");
+      return;
+    }
+    setError("");
+    setStep(2);
+    scrollToForm();
+  }
+
+  function goBack() {
+    setError("");
+    setStep(1);
+    scrollToForm();
+  }
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    if (selectedServices.length === 0) {
-      alert("Please pick at least one service — what do you need cleaned?");
+    const fd = new FormData(form);
+    const name = fd.get("name")?.toString().trim();
+    const phone = fd.get("phone")?.toString().trim();
+    if (!name || !phone) {
+      setError("Name and phone are all we need — please fill both.");
       return;
     }
     const totalMb = previews.reduce((s, p) => s + p.file.size, 0) / (1024 * 1024);
     if (totalMb > MAX_TOTAL_MB) {
-      alert(`Photos are ${totalMb.toFixed(1)} MB total — please keep under ${MAX_TOTAL_MB} MB, or text them to ${site.phoneDisplay}.`);
+      setError(`Photos are ${totalMb.toFixed(1)} MB total — keep under ${MAX_TOTAL_MB} MB, or text them to ${site.phoneDisplay}.`);
       return;
     }
+    setError("");
     setStatus("sending");
     try {
-      const fd = new FormData(form);
       fd.set("services", selectedServices.join(", "));
       fd.set("slotDay", day);
       fd.set("slotTime", time);
@@ -117,44 +144,47 @@ export default function QuoteForm() {
 
   return (
     <form
+      ref={formRef}
       id="quote"
       onSubmit={onSubmit}
+      noValidate
       className="sticker scroll-mt-28 bg-cream-100 p-6 sm:p-8"
     >
-      {/* contact */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block">
-          <span className={labelCls}>* First Name</span>
-          <input required name="name" autoComplete="given-name" placeholder="Alex" className={inputCls} />
-        </label>
-        <label className="block">
-          <span className={labelCls}>* Phone</span>
-          <input required name="phone" type="tel" autoComplete="tel" placeholder="(949) 555-0117" className={inputCls} />
-        </label>
-        <label className="block">
-          <span className={labelCls}>* Email</span>
-          <input required name="email" type="email" autoComplete="email" placeholder="alex@email.com" className={inputCls} />
-        </label>
-        <label className="block">
-          <span className={labelCls}>* Zip Code</span>
-          <input required name="zip" inputMode="numeric" autoComplete="postal-code" placeholder="92602" className={inputCls} />
-        </label>
+      {/* step indicator */}
+      <div className="mb-6 flex items-center gap-3">
+        {[
+          { n: 1 as const, label: "The job" },
+          { n: 2 as const, label: "Your details" },
+        ].map((s, i) => (
+          <div key={s.n} className="flex items-center gap-3">
+            {i > 0 && <span className="h-1 w-8 rounded-full bg-pink-300" aria-hidden />}
+            <button
+              type="button"
+              onClick={() => (s.n === 1 ? goBack() : goNext())}
+              aria-current={step === s.n ? "step" : undefined}
+              className={`flex items-center gap-2 rounded-full border-3 px-4 py-1.5 transition-colors ${
+                step === s.n
+                  ? "border-azure-500 bg-azure-500 text-cream-50"
+                  : "border-pink-300 bg-cream-50 text-azure-600"
+              }`}
+            >
+              <span className="display-flat text-lg">{s.n}</span>
+              <span className="text-xs font-bold tracking-wide uppercase">{s.label}</span>
+            </button>
+          </div>
+        ))}
       </div>
-      <label className="mt-4 block">
-        <span className={labelCls}>* Street Address</span>
-        <input required name="address" autoComplete="street-address" placeholder="123 Palm Ave, Irvine" className={inputCls} />
-      </label>
 
-      {/* services */}
-      <fieldset className="mt-7">
-        <legend className="display-flat text-2xl tracking-wider text-azure-500">
+      {/* ---------- STEP 1: the job ---------- */}
+      <div hidden={step !== 1}>
+        <h3 className="display-flat text-3xl tracking-wider text-azure-500">
           What do you need cleaned? <span className="text-pink-500">*</span>
-        </legend>
+        </h3>
         <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2 xl:grid-cols-3">
           {services.map((s) => (
             <label
               key={s.key}
-              className="flex cursor-pointer items-center gap-2.5 text-sm font-bold text-azure-700"
+              className="flex cursor-pointer items-center gap-2.5 rounded-xl border-3 border-transparent px-2 py-1.5 text-sm font-bold text-azure-700 transition-colors has-checked:border-pink-300 has-checked:bg-cream-50"
             >
               <input
                 type="checkbox"
@@ -166,172 +196,235 @@ export default function QuoteForm() {
             </label>
           ))}
         </div>
-      </fieldset>
 
-      {/* photos */}
-      <fieldset className="mt-7">
-        <legend className={labelCls}>
-          Photos of the job <span className="font-semibold normal-case text-azure-700/50">(up to {MAX_PHOTOS} — fastest way to a firm quote)</span>
-        </legend>
-        <div
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            addFiles(e.dataTransfer.files);
-          }}
-          onClick={() => fileInput.current?.click()}
-          className="mt-2 flex min-h-24 cursor-pointer flex-wrap items-center gap-3 rounded-xl border-3 border-dashed border-pink-400 bg-cream-50 p-4 transition-colors hover:border-azure-500"
-        >
-          {previews.length === 0 && (
-            <p className="w-full text-center text-sm font-semibold text-azure-700/60">
-              <span className="mb-1 block text-2xl">📷</span>
-              Tap to add photos, or drag &amp; drop
-            </p>
-          )}
-          {previews.map((p) => (
-            <div key={p.url} className="relative h-20 w-20 overflow-hidden rounded-xl border-3 border-pink-300">
-              <Image src={p.url} alt="Upload preview" fill unoptimized className="object-cover" />
-              <button
-                type="button"
-                aria-label="Remove photo"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removePhoto(p.url);
-                }}
-                className="absolute top-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-azure-600 text-[10px] text-cream-50"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-          <input
-            ref={fileInput}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => {
-              addFiles(e.target.files);
-              e.target.value = "";
+        <fieldset className="mt-6">
+          <legend className={labelCls}>
+            Photos of the job{" "}
+            <span className="font-semibold normal-case text-azure-700/50">
+              (optional — but it&apos;s the fastest way to a firm quote)
+            </span>
+          </legend>
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              addFiles(e.dataTransfer.files);
             }}
-          />
-        </div>
-      </fieldset>
-
-      {/* booking */}
-      <fieldset className="mt-7">
-        <legend className={labelCls}>
-          When do you need the work done by? <span className="font-semibold normal-case text-azure-700/50">(optional — confirmed by text)</span>
-        </legend>
-        <div className="mt-2 flex gap-2 overflow-x-auto pb-2">
-          {days.map((d) => {
-            const label = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-            const active = day === label;
-            return (
-              <button
-                type="button"
-                key={label}
-                onClick={() => setDay(active ? "" : label)}
-                aria-pressed={active}
-                className={`shrink-0 rounded-xl border-3 px-3.5 py-2 text-center transition-all duration-150 ${
-                  active
-                    ? "border-azure-500 bg-azure-500 text-cream-50"
-                    : "border-pink-300 bg-cream-50 text-azure-700 hover:border-azure-400"
-                }`}
-              >
-                <span className="block text-[11px] font-bold uppercase opacity-70">
-                  {label.split(",")[0]}
-                </span>
-                <span className="block text-sm font-bold">{label.split(", ")[1]}</span>
-              </button>
-            );
-          })}
-        </div>
-        {day && (
-          <div className="mt-2 flex flex-wrap gap-2">
-            {SLOT_TIMES.map((t) => (
-              <button
-                type="button"
-                key={t}
-                onClick={() => setTime(time === t ? "" : t)}
-                aria-pressed={time === t}
-                className={`rounded-xl border-3 px-4 py-2 text-sm font-bold transition-all duration-150 ${
-                  time === t
-                    ? "border-azure-500 bg-azure-500 text-cream-50"
-                    : "border-pink-300 text-azure-700 hover:border-azure-400"
-                }`}
-              >
-                {t}
-              </button>
+            onClick={() => fileInput.current?.click()}
+            className="mt-2 flex min-h-24 cursor-pointer flex-wrap items-center gap-3 rounded-xl border-3 border-dashed border-pink-400 bg-cream-50 p-4 transition-colors hover:border-azure-500"
+          >
+            {previews.length === 0 && (
+              <p className="w-full text-center text-sm font-semibold text-azure-700/60">
+                <span className="mb-1 block text-2xl">📷</span>
+                Tap to add photos, or drag &amp; drop
+              </p>
+            )}
+            {previews.map((p) => (
+              <div key={p.url} className="relative h-20 w-20 overflow-hidden rounded-xl border-3 border-pink-300">
+                <Image src={p.url} alt="Upload preview" fill unoptimized className="object-cover" />
+                <button
+                  type="button"
+                  aria-label="Remove photo"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removePhoto(p.url);
+                  }}
+                  className="absolute top-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-azure-600 text-[10px] text-cream-50"
+                >
+                  ✕
+                </button>
+              </div>
             ))}
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                addFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
           </div>
-        )}
-      </fieldset>
+        </fieldset>
 
-      {/* notes */}
-      <label className="mt-6 block">
-        <span className={labelCls}>Anything else?</span>
-        <textarea
-          name="notes"
-          rows={3}
-          placeholder="ex: Gate Codes, Pets, Service Details, Preferred Contact Method?"
-          className={inputCls}
-        />
-      </label>
-
-      {/* selects */}
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <label className="block">
-          <span className={labelCls}>* How often do you need it cleaned?</span>
-          <select required name="frequency" defaultValue="" className={inputCls}>
-            <option value="" disabled>
-              - Select -
-            </option>
-            {frequencies.map((f) => (
-              <option key={f} value={f}>
-                {f}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className={labelCls}>* How did you hear about us?</span>
-          <select required name="hearAbout" defaultValue="" className={inputCls}>
-            <option value="" disabled>
-              - Select -
-            </option>
-            {hearAboutOptions.map((h) => (
-              <option key={h} value={h}>
-                {h}
-              </option>
-            ))}
-          </select>
-        </label>
+        <button
+          type="button"
+          onClick={goNext}
+          className="btn-retro mt-6 w-full rounded-xl bg-pink-300 py-4 text-2xl text-azure-800"
+        >
+          Next: Your details →
+        </button>
       </div>
 
-      {/* consent */}
-      <label className="mt-6 flex items-start gap-3 text-sm font-semibold text-azure-700">
-        <input type="checkbox" name="smsConsent" value="yes" className="check-retro mt-0.5" />
-        I agree to get text messages from Cornerstone about my quote and project.
-      </label>
-      <p className="mt-2 text-[11px] leading-relaxed text-azure-700/60 italic">
-        By submitting, you authorize Cornerstone Site Services to reach out via phone,
-        email, or text about your project needs. We never share your personal
-        information with 3rd parties. Opt out at any time. Message/data rates apply.
-        Consent is not a condition of purchase.
-      </p>
+      {/* ---------- STEP 2: your details ---------- */}
+      <div hidden={step !== 2}>
+        {/* picked services recap */}
+        <div className="mb-5 flex flex-wrap gap-2">
+          {selectedServices.map((s) => (
+            <span
+              key={s}
+              className="rounded-full border-2 border-pink-300 bg-cream-50 px-3 py-1 text-xs font-bold text-azure-600"
+            >
+              ✦ {s}
+            </span>
+          ))}
+          {previews.length > 0 && (
+            <span className="rounded-full border-2 border-pink-300 bg-cream-50 px-3 py-1 text-xs font-bold text-azure-600">
+              📷 {previews.length} photo{previews.length > 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
 
-      <button
-        type="submit"
-        disabled={status === "sending"}
-        className="btn-retro mt-6 w-full rounded-xl bg-pink-300 py-4 text-2xl text-azure-800 disabled:cursor-wait disabled:opacity-60"
-      >
-        {status === "sending" ? "Sending…" : "Submit"}
-      </button>
-      {status === "error" && (
-        <p role="alert" className="mt-3 text-center text-sm font-bold text-pink-500">
-          Something went wrong — please try again, or text your photos to{" "}
-          <a href={`sms:${site.phone}`} className="underline">{site.phoneDisplay}</a>.
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className={labelCls}>* First Name</span>
+            <input name="name" autoComplete="given-name" placeholder="Alex" className={inputCls} />
+          </label>
+          <label className="block">
+            <span className={labelCls}>* Phone</span>
+            <input name="phone" type="tel" autoComplete="tel" placeholder="(949) 555-0117" className={inputCls} />
+          </label>
+        </div>
+        <label className="mt-4 block">
+          <span className={labelCls}>
+            Address or Zip{" "}
+            <span className="font-semibold normal-case text-azure-700/50">(so we can route the crew)</span>
+          </span>
+          <input name="address" autoComplete="street-address" placeholder="123 Palm Ave, Irvine · 92602" className={inputCls} />
+        </label>
+
+        <fieldset className="mt-6">
+          <legend className={labelCls}>
+            When do you need it done by?{" "}
+            <span className="font-semibold normal-case text-azure-700/50">(optional — confirmed by text)</span>
+          </legend>
+          <div className="mt-2 flex gap-2 overflow-x-auto pb-2">
+            {days.map((d) => {
+              const label = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+              const active = day === label;
+              return (
+                <button
+                  type="button"
+                  key={label}
+                  onClick={() => setDay(active ? "" : label)}
+                  aria-pressed={active}
+                  className={`shrink-0 rounded-xl border-3 px-3.5 py-2 text-center transition-all duration-150 ${
+                    active
+                      ? "border-azure-500 bg-azure-500 text-cream-50"
+                      : "border-pink-300 bg-cream-50 text-azure-700 hover:border-azure-400"
+                  }`}
+                >
+                  <span className="block text-[11px] font-bold uppercase opacity-70">
+                    {label.split(",")[0]}
+                  </span>
+                  <span className="block text-sm font-bold">{label.split(", ")[1]}</span>
+                </button>
+              );
+            })}
+          </div>
+          {day && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {SLOT_TIMES.map((t) => (
+                <button
+                  type="button"
+                  key={t}
+                  onClick={() => setTime(time === t ? "" : t)}
+                  aria-pressed={time === t}
+                  className={`rounded-xl border-3 px-4 py-2 text-sm font-bold transition-all duration-150 ${
+                    time === t
+                      ? "border-azure-500 bg-azure-500 text-cream-50"
+                      : "border-pink-300 text-azure-700 hover:border-azure-400"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
+        </fieldset>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className={labelCls}>How often?</span>
+            <select name="frequency" defaultValue="One-time" className={inputCls}>
+              {frequencies.map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className={labelCls}>
+              Email <span className="font-semibold normal-case text-azure-700/50">(optional)</span>
+            </span>
+            <input name="email" type="email" autoComplete="email" placeholder="alex@email.com" className={inputCls} />
+          </label>
+        </div>
+
+        <details className="mt-4">
+          <summary className="cursor-pointer text-xs font-bold tracking-wide text-azure-600/70 uppercase">
+            + Anything else? (gate codes, pets, how you found us)
+          </summary>
+          <div className="mt-3 space-y-4">
+            <textarea
+              name="notes"
+              rows={3}
+              placeholder="ex: Gate code 1234, dog in yard, prefer texts"
+              className={inputCls}
+            />
+            <label className="block">
+              <span className={labelCls}>How did you hear about us?</span>
+              <select name="hearAbout" defaultValue="" className={inputCls}>
+                <option value="">- Optional -</option>
+                {hearAboutOptions.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </details>
+
+        <label className="mt-5 flex items-start gap-3 text-sm font-semibold text-azure-700">
+          <input type="checkbox" name="smsConsent" value="yes" className="check-retro mt-0.5" />
+          I agree to get text messages from Cornerstone about my quote and project.
+        </label>
+        <p className="mt-2 text-[11px] leading-relaxed text-azure-700/60 italic">
+          By submitting, you authorize Cornerstone Site Services to reach out via
+          phone, email, or text about your project needs. We never share your
+          personal information. Opt out at any time. Message/data rates apply.
+        </p>
+
+        <div className="mt-6 flex gap-3">
+          <button
+            type="button"
+            onClick={goBack}
+            className="rounded-xl border-3 border-pink-300 px-6 py-4 text-lg font-bold text-azure-600 transition-colors hover:bg-pink-100"
+          >
+            ← Back
+          </button>
+          <button
+            type="submit"
+            disabled={status === "sending"}
+            className="btn-retro flex-1 rounded-xl bg-pink-300 py-4 text-2xl text-azure-800 disabled:cursor-wait disabled:opacity-60"
+          >
+            {status === "sending" ? "Sending…" : "Get My Quote"}
+          </button>
+        </div>
+      </div>
+
+      {(error || status === "error") && (
+        <p role="alert" className="mt-4 text-center text-sm font-bold text-pink-500">
+          {error || (
+            <>
+              Something went wrong — please try again, or text your photos to{" "}
+              <a href={`sms:${site.phone}`} className="underline">{site.phoneDisplay}</a>.
+            </>
+          )}
         </p>
       )}
       <p className="mt-3 text-center text-xs font-semibold text-azure-700/60">
