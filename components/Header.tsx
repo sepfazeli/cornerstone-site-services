@@ -9,7 +9,7 @@ const nav = [
   { href: "/#services", label: "Services" },
   { href: "/#results", label: "Results" },
   { href: "/#plans", label: "Plans" },
-  { href: "/pressure-washing", label: "Pressure Washing" },
+  { href: "/pressure-washing", label: "Power Washing" },
   { href: "/auto-detailing", label: "Auto Detailing" },
   { href: "/#faq", label: "FAQ" },
 ];
@@ -27,10 +27,10 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b-3 transition-all duration-300 ${
         scrolled
-          ? "bg-cream-50/90 shadow-[0_1px_0_0_rgba(166,90,67,0.15),0_10px_30px_-15px_rgba(47,27,20,0.25)] backdrop-blur-md"
-          : "bg-transparent"
+          ? "border-pink-300 bg-cream-50/95 shadow-[0_8px_0_0_rgba(245,178,186,0.25)] backdrop-blur-md"
+          : "border-transparent bg-cream-50/80 backdrop-blur-sm"
       }`}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
@@ -38,12 +38,12 @@ export default function Header() {
           <Logo compact />
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
+        <nav className="hidden items-center gap-6 lg:flex" aria-label="Main">
           {nav.map((n) => (
             <Link
               key={n.href}
               href={n.href}
-              className="link-line text-sm font-medium tracking-wide text-espresso-800/90 hover:text-clay-600"
+              className="link-line text-sm font-bold tracking-wide text-azure-700 uppercase hover:text-azure-500"
             >
               {n.label}
             </Link>
@@ -53,15 +53,15 @@ export default function Header() {
         <div className="hidden items-center gap-4 lg:flex">
           <a
             href={`tel:${site.phone}`}
-            className="text-sm font-semibold tracking-wide text-espresso-800 hover:text-clay-600"
+            className="display-flat text-lg tracking-wider text-azure-500 hover:text-azure-400"
           >
             {site.phoneDisplay}
           </a>
           <Link
             href="/#quote"
-            className="btn-sheen rounded-full bg-clay-500 px-5 py-2.5 text-sm font-semibold text-cream-50 shadow-lg shadow-clay-500/25 transition-transform duration-300 hover:-translate-y-0.5 hover:bg-clay-600"
+            className="btn-retro rounded-xl bg-pink-300 px-5 py-2.5 text-base text-azure-800"
           >
-            Get My Quote
+            Get a Quote
           </Link>
         </div>
 
@@ -70,7 +70,7 @@ export default function Header() {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label="Toggle menu"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-clay-500/30 text-espresso-900 lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-xl border-3 border-pink-300 text-azure-600 lg:hidden"
         >
           <span className="relative block h-3 w-5">
             <span
@@ -89,7 +89,7 @@ export default function Header() {
       {/* mobile menu */}
       <div
         className={`grid overflow-hidden bg-cream-50/95 backdrop-blur-md transition-all duration-400 lg:hidden ${
-          open ? "grid-rows-[1fr] border-b border-clay-500/15" : "grid-rows-[0fr]"
+          open ? "grid-rows-[1fr] border-b-3 border-pink-300" : "grid-rows-[0fr]"
         }`}
       >
         <nav className="min-h-0 overflow-hidden px-6" aria-label="Mobile">
@@ -99,7 +99,7 @@ export default function Header() {
                 key={n.href}
                 href={n.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-3 text-base font-medium text-espresso-800 hover:bg-cream-100"
+                className="rounded-lg px-3 py-3 text-base font-bold text-azure-700 uppercase hover:bg-pink-100"
               >
                 {n.label}
               </Link>
@@ -107,13 +107,13 @@ export default function Header() {
             <Link
               href="/#quote"
               onClick={() => setOpen(false)}
-              className="mt-2 rounded-full bg-clay-500 px-5 py-3 text-center font-semibold text-cream-50"
+              className="btn-retro mt-2 rounded-xl bg-pink-300 px-5 py-3 text-center text-azure-800"
             >
-              Get My Quote
+              Get a Quote
             </Link>
             <a
               href={`tel:${site.phone}`}
-              className="py-3 text-center text-sm font-semibold text-clay-600"
+              className="display-flat py-3 text-center text-xl text-azure-500"
             >
               Call {site.phoneDisplay}
             </a>

@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { useMemo, useRef, useState } from "react";
-import Reveal from "./Reveal";
-import { site, services } from "@/lib/site";
+import { site, services, frequencies, hearAboutOptions } from "@/lib/site";
 
 const SLOT_TIMES = ["8:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"];
 const MAX_PHOTOS = 5;
@@ -23,15 +22,13 @@ function nextDays(count: number) {
 }
 
 export default function QuoteForm() {
-  const days = useMemo(() => nextDays(12), []);
+  const days = useMemo(() => nextDays(10), []);
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [plan, setPlan] = useState("subscription");
   const [day, setDay] = useState<string>("");
   const [time, setTime] = useState<string>("");
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const fileInput = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
   function addFiles(list: FileList | null) {
     if (!list) return;
@@ -55,15 +52,19 @@ export default function QuoteForm() {
     });
   }
 
-  function toggleService(key: string) {
+  function toggleService(title: string) {
     setSelectedServices((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+      prev.includes(title) ? prev.filter((k) => k !== title) : [...prev, title]
     );
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
+    if (selectedServices.length === 0) {
+      alert("Please pick at least one service — what do you need cleaned?");
+      return;
+    }
     const totalMb = previews.reduce((s, p) => s + p.file.size, 0) / (1024 * 1024);
     if (totalMb > MAX_TOTAL_MB) {
       alert(`Photos are ${totalMb.toFixed(1)} MB total — please keep under ${MAX_TOTAL_MB} MB, or text them to ${site.phoneDisplay}.`);
@@ -72,8 +73,7 @@ export default function QuoteForm() {
     setStatus("sending");
     try {
       const fd = new FormData(form);
-      fd.set("services", selectedServices.join(", ") || "General");
-      fd.set("plan", plan);
+      fd.set("services", selectedServices.join(", "));
       fd.set("slotDay", day);
       fd.set("slotTime", time);
       previews.forEach((p, i) => fd.append(`photo-${i}`, p.file, p.file.name));
@@ -87,282 +87,260 @@ export default function QuoteForm() {
   }
 
   const inputCls =
-    "w-full rounded-xl border border-clay-500/25 bg-cream-50 px-4 py-3 text-sm text-espresso-900 placeholder:text-espresso-700/40 focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500/20 transition";
+    "w-full rounded-xl border-3 border-pink-300 bg-cream-50 px-4 py-3 text-sm font-semibold text-azure-700 placeholder:text-azure-700/40 focus:border-azure-500 focus:outline-none transition";
+  const labelCls =
+    "mb-1.5 block text-xs font-bold tracking-wide text-azure-600 uppercase";
 
   if (status === "done") {
     return (
-      <section id="quote" className="mx-auto max-w-3xl scroll-mt-24 px-5 py-24 text-center lg:py-32">
-        <div className="rounded-3xl border border-clay-500/25 bg-cream-100/70 p-12">
-          <p className="font-display text-5xl">✦</p>
-          <h2 className="mt-4 font-display text-4xl font-semibold">Request received.</h2>
-          <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed text-espresso-700/90">
-            We&apos;re sizing your job from the photos now. Expect your firm quote by
-            text within <strong>2 business hours</strong>
-            {day && time ? (
-              <> — and we&apos;ve penciled you in for <strong>{day} at {time}</strong>.</>
-            ) : (
-              "."
-            )}
-          </p>
-          <a
-            href={`tel:${site.phone}`}
-            className="mt-8 inline-block rounded-full bg-clay-500 px-7 py-3.5 font-semibold text-cream-50 hover:bg-clay-600"
-          >
-            Questions? Call {site.phoneDisplay}
-          </a>
-        </div>
-      </section>
+      <div id="quote" className="sticker scroll-mt-28 bg-cream-100 p-10 text-center">
+        <p className="display text-6xl">✦</p>
+        <h2 className="display mt-3 text-5xl">Request received</h2>
+        <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed">
+          We&apos;re sizing your job from the photos now. Expect your firm quote by
+          text within <strong>2 business hours</strong>
+          {day && time ? (
+            <> — and we&apos;ve penciled you in for <strong>{day} at {time}</strong>.</>
+          ) : (
+            "."
+          )}
+        </p>
+        <a
+          href={`tel:${site.phone}`}
+          className="btn-retro mt-8 inline-block rounded-xl bg-pink-300 px-7 py-3.5 text-lg text-azure-800"
+        >
+          Questions? Call {site.phoneDisplay}
+        </a>
+      </div>
     );
   }
 
   return (
-    <section id="quote" className="relative scroll-mt-24 overflow-hidden bg-cream-100/70 py-24 lg:py-32">
-      <div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-[1fr_1.2fr] lg:px-8">
-        <Reveal>
-          <div className="lg:sticky lg:top-28">
-            <p className="text-xs font-semibold tracking-[0.3em] text-clay-500 uppercase">
-              Photo quote + booking
-            </p>
-            <h2 className="mt-3 font-display text-4xl font-semibold leading-tight sm:text-5xl">
-              Snap it. Send it. <em className="text-clay-500">Booked.</em>
-            </h2>
-            <ol className="mt-8 space-y-6">
-              {[
-                ["Upload 3–5 photos", "Driveway, facade, patio or car — whatever needs love. No site visit required."],
-                ["Get a firm quote in ~2 hours", "We size the job from your photos and text you a real number, not a range."],
-                ["Pick your time slot", "Reserve a window right here. We confirm by text — nothing charged until you approve."],
-              ].map(([t, d], i) => (
-                <li key={t} className="flex gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-clay-500 font-display text-lg font-semibold text-cream-50">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-semibold text-espresso-900">{t}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-espresso-700/85">{d}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-            <p className="mt-8 rounded-2xl border border-clay-500/20 bg-cream-50 p-5 text-sm leading-relaxed text-espresso-700/90">
-              Prefer texting? Send photos straight to{" "}
-              <a href={`sms:${site.phone}`} className="font-semibold text-clay-600 underline underline-offset-2">
-                {site.phoneDisplay}
-              </a>{" "}
-              and we&apos;ll take it from there.
-            </p>
-          </div>
-        </Reveal>
-
-        <Reveal delay={150}>
-          <form
-            ref={formRef}
-            onSubmit={onSubmit}
-            className="rounded-3xl border border-clay-500/20 bg-cream-50 p-7 shadow-xl shadow-espresso-900/5 sm:p-9"
-          >
-            {/* contact */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-semibold tracking-wide text-espresso-800 uppercase">Name</span>
-                <input required name="name" autoComplete="name" placeholder="Alex Rivera" className={inputCls} />
-              </label>
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-semibold tracking-wide text-espresso-800 uppercase">Phone</span>
-                <input required name="phone" type="tel" autoComplete="tel" placeholder="(310) 555-0117" className={inputCls} />
-              </label>
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-semibold tracking-wide text-espresso-800 uppercase">Email <span className="font-normal normal-case text-espresso-700/50">(optional)</span></span>
-                <input name="email" type="email" autoComplete="email" placeholder="alex@email.com" className={inputCls} />
-              </label>
-              <label className="block">
-                <span className="mb-1.5 block text-xs font-semibold tracking-wide text-espresso-800 uppercase">Zip / Neighborhood</span>
-                <input required name="area" placeholder="90402 · Santa Monica" className={inputCls} />
-              </label>
-            </div>
-
-            {/* services */}
-            <fieldset className="mt-7">
-              <legend className="text-xs font-semibold tracking-wide text-espresso-800 uppercase">What needs cleaning?</legend>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {services.map((s) => {
-                  const active = selectedServices.includes(s.key);
-                  return (
-                    <button
-                      type="button"
-                      key={s.key}
-                      onClick={() => toggleService(s.key)}
-                      aria-pressed={active}
-                      className={`rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                        active
-                          ? "border-clay-500 bg-clay-500 text-cream-50 shadow-md shadow-clay-500/25"
-                          : "border-clay-500/30 bg-cream-50 text-espresso-800 hover:border-clay-500/70"
-                      }`}
-                    >
-                      {s.title}
-                    </button>
-                  );
-                })}
-              </div>
-            </fieldset>
-
-            {/* plan */}
-            <fieldset className="mt-7">
-              <legend className="text-xs font-semibold tracking-wide text-espresso-800 uppercase">How often?</legend>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {[
-                  ["one-time", "One-time deep clean", "Full reset, single visit"],
-                  ["subscription", "Care plan (subscription)", "Deep clean + scheduled upkeep"],
-                ].map(([val, label, sub]) => (
-                  <button
-                    type="button"
-                    key={val}
-                    onClick={() => setPlan(val)}
-                    aria-pressed={plan === val}
-                    className={`rounded-2xl border p-4 text-left transition-all duration-200 ${
-                      plan === val
-                        ? "border-clay-500 bg-clay-500/10 ring-2 ring-clay-500/30"
-                        : "border-clay-500/25 hover:border-clay-500/60"
-                    }`}
-                  >
-                    <span className="block text-sm font-semibold text-espresso-900">{label}</span>
-                    <span className="mt-0.5 block text-xs text-espresso-700/70">{sub}</span>
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-
-            {/* photos */}
-            <fieldset className="mt-7">
-              <legend className="text-xs font-semibold tracking-wide text-espresso-800 uppercase">
-                Photos <span className="font-normal normal-case text-espresso-700/50">(up to {MAX_PHOTOS})</span>
-              </legend>
-              <div
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  addFiles(e.dataTransfer.files);
-                }}
-                onClick={() => fileInput.current?.click()}
-                className="mt-3 flex min-h-28 cursor-pointer flex-wrap items-center gap-3 rounded-2xl border-2 border-dashed border-clay-500/35 bg-cream-100/50 p-4 transition-colors hover:border-clay-500/70 hover:bg-cream-100"
-              >
-                {previews.length === 0 && (
-                  <p className="w-full text-center text-sm text-espresso-700/60">
-                    <span className="mb-1 block text-2xl">📷</span>
-                    Tap to add photos, or drag &amp; drop
-                  </p>
-                )}
-                {previews.map((p) => (
-                  <div key={p.url} className="relative h-20 w-20 overflow-hidden rounded-xl border border-clay-500/25">
-                    <Image src={p.url} alt="Upload preview" fill unoptimized className="object-cover" />
-                    <button
-                      type="button"
-                      aria-label="Remove photo"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removePhoto(p.url);
-                      }}
-                      className="absolute top-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-espresso-900/80 text-[10px] text-cream-50"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-                <input
-                  ref={fileInput}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => {
-                    addFiles(e.target.files);
-                    e.target.value = "";
-                  }}
-                />
-              </div>
-            </fieldset>
-
-            {/* booking */}
-            <fieldset className="mt-7">
-              <legend className="text-xs font-semibold tracking-wide text-espresso-800 uppercase">
-                Reserve a time slot <span className="font-normal normal-case text-espresso-700/50">(optional — confirmed by text)</span>
-              </legend>
-              <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-                {days.map((d) => {
-                  const label = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-                  const active = day === label;
-                  return (
-                    <button
-                      type="button"
-                      key={label}
-                      onClick={() => setDay(active ? "" : label)}
-                      aria-pressed={active}
-                      className={`shrink-0 rounded-xl border px-3.5 py-2.5 text-center transition-all duration-200 ${
-                        active
-                          ? "border-clay-500 bg-clay-500 text-cream-50 shadow-md shadow-clay-500/25"
-                          : "border-clay-500/25 bg-cream-50 text-espresso-800 hover:border-clay-500/60"
-                      }`}
-                    >
-                      <span className="block text-[11px] font-medium uppercase opacity-70">
-                        {label.split(",")[0]}
-                      </span>
-                      <span className="block text-sm font-semibold">
-                        {label.split(", ")[1]}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-              {day && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {SLOT_TIMES.map((t) => (
-                    <button
-                      type="button"
-                      key={t}
-                      onClick={() => setTime(time === t ? "" : t)}
-                      aria-pressed={time === t}
-                      className={`rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                        time === t
-                          ? "border-clay-500 bg-clay-500 text-cream-50"
-                          : "border-clay-500/30 text-espresso-800 hover:border-clay-500/70"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </fieldset>
-
-            <label className="mt-7 block">
-              <span className="mb-1.5 block text-xs font-semibold tracking-wide text-espresso-800 uppercase">
-                Anything else? <span className="font-normal normal-case text-espresso-700/50">(optional)</span>
-              </span>
-              <textarea
-                name="notes"
-                rows={3}
-                placeholder="Gate code, parking notes, problem areas…"
-                className={inputCls}
-              />
-            </label>
-
-            <button
-              type="submit"
-              disabled={status === "sending"}
-              className="btn-sheen mt-8 w-full rounded-full bg-clay-500 py-4 text-base font-semibold text-cream-50 shadow-lg shadow-clay-500/30 transition-all duration-300 hover:-translate-y-0.5 hover:bg-clay-600 disabled:cursor-wait disabled:opacity-60"
-            >
-              {status === "sending" ? "Sending…" : "Send My Photo Quote Request"}
-            </button>
-            {status === "error" && (
-              <p role="alert" className="mt-3 text-center text-sm font-medium text-clay-700">
-                Something went wrong — please try again, or text your photos to{" "}
-                <a href={`sms:${site.phone}`} className="underline">{site.phoneDisplay}</a>.
-              </p>
-            )}
-            <p className="mt-4 text-center text-xs text-espresso-700/55">
-              No spam, no obligation. We only use your info to prepare your quote.
-            </p>
-          </form>
-        </Reveal>
+    <form
+      id="quote"
+      onSubmit={onSubmit}
+      className="sticker scroll-mt-28 bg-cream-100 p-6 sm:p-8"
+    >
+      {/* contact */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block">
+          <span className={labelCls}>* First Name</span>
+          <input required name="name" autoComplete="given-name" placeholder="Alex" className={inputCls} />
+        </label>
+        <label className="block">
+          <span className={labelCls}>* Phone</span>
+          <input required name="phone" type="tel" autoComplete="tel" placeholder="(949) 555-0117" className={inputCls} />
+        </label>
+        <label className="block">
+          <span className={labelCls}>* Email</span>
+          <input required name="email" type="email" autoComplete="email" placeholder="alex@email.com" className={inputCls} />
+        </label>
+        <label className="block">
+          <span className={labelCls}>* Zip Code</span>
+          <input required name="zip" inputMode="numeric" autoComplete="postal-code" placeholder="92602" className={inputCls} />
+        </label>
       </div>
-    </section>
+      <label className="mt-4 block">
+        <span className={labelCls}>* Street Address</span>
+        <input required name="address" autoComplete="street-address" placeholder="123 Palm Ave, Irvine" className={inputCls} />
+      </label>
+
+      {/* services */}
+      <fieldset className="mt-7">
+        <legend className="display-flat text-2xl tracking-wider text-azure-500">
+          What do you need cleaned? <span className="text-pink-500">*</span>
+        </legend>
+        <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2 xl:grid-cols-3">
+          {services.map((s) => (
+            <label
+              key={s.key}
+              className="flex cursor-pointer items-center gap-2.5 text-sm font-bold text-azure-700"
+            >
+              <input
+                type="checkbox"
+                className="check-retro"
+                checked={selectedServices.includes(s.title)}
+                onChange={() => toggleService(s.title)}
+              />
+              {s.title}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      {/* photos */}
+      <fieldset className="mt-7">
+        <legend className={labelCls}>
+          Photos of the job <span className="font-semibold normal-case text-azure-700/50">(up to {MAX_PHOTOS} — fastest way to a firm quote)</span>
+        </legend>
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            addFiles(e.dataTransfer.files);
+          }}
+          onClick={() => fileInput.current?.click()}
+          className="mt-2 flex min-h-24 cursor-pointer flex-wrap items-center gap-3 rounded-xl border-3 border-dashed border-pink-400 bg-cream-50 p-4 transition-colors hover:border-azure-500"
+        >
+          {previews.length === 0 && (
+            <p className="w-full text-center text-sm font-semibold text-azure-700/60">
+              <span className="mb-1 block text-2xl">📷</span>
+              Tap to add photos, or drag &amp; drop
+            </p>
+          )}
+          {previews.map((p) => (
+            <div key={p.url} className="relative h-20 w-20 overflow-hidden rounded-xl border-3 border-pink-300">
+              <Image src={p.url} alt="Upload preview" fill unoptimized className="object-cover" />
+              <button
+                type="button"
+                aria-label="Remove photo"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removePhoto(p.url);
+                }}
+                className="absolute top-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-azure-600 text-[10px] text-cream-50"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <input
+            ref={fileInput}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              addFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+        </div>
+      </fieldset>
+
+      {/* booking */}
+      <fieldset className="mt-7">
+        <legend className={labelCls}>
+          When do you need the work done by? <span className="font-semibold normal-case text-azure-700/50">(optional — confirmed by text)</span>
+        </legend>
+        <div className="mt-2 flex gap-2 overflow-x-auto pb-2">
+          {days.map((d) => {
+            const label = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+            const active = day === label;
+            return (
+              <button
+                type="button"
+                key={label}
+                onClick={() => setDay(active ? "" : label)}
+                aria-pressed={active}
+                className={`shrink-0 rounded-xl border-3 px-3.5 py-2 text-center transition-all duration-150 ${
+                  active
+                    ? "border-azure-500 bg-azure-500 text-cream-50"
+                    : "border-pink-300 bg-cream-50 text-azure-700 hover:border-azure-400"
+                }`}
+              >
+                <span className="block text-[11px] font-bold uppercase opacity-70">
+                  {label.split(",")[0]}
+                </span>
+                <span className="block text-sm font-bold">{label.split(", ")[1]}</span>
+              </button>
+            );
+          })}
+        </div>
+        {day && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {SLOT_TIMES.map((t) => (
+              <button
+                type="button"
+                key={t}
+                onClick={() => setTime(time === t ? "" : t)}
+                aria-pressed={time === t}
+                className={`rounded-xl border-3 px-4 py-2 text-sm font-bold transition-all duration-150 ${
+                  time === t
+                    ? "border-azure-500 bg-azure-500 text-cream-50"
+                    : "border-pink-300 text-azure-700 hover:border-azure-400"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        )}
+      </fieldset>
+
+      {/* notes */}
+      <label className="mt-6 block">
+        <span className={labelCls}>Anything else?</span>
+        <textarea
+          name="notes"
+          rows={3}
+          placeholder="ex: Gate Codes, Pets, Service Details, Preferred Contact Method?"
+          className={inputCls}
+        />
+      </label>
+
+      {/* selects */}
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <label className="block">
+          <span className={labelCls}>* How often do you need it cleaned?</span>
+          <select required name="frequency" defaultValue="" className={inputCls}>
+            <option value="" disabled>
+              - Select -
+            </option>
+            {frequencies.map((f) => (
+              <option key={f} value={f}>
+                {f}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className={labelCls}>* How did you hear about us?</span>
+          <select required name="hearAbout" defaultValue="" className={inputCls}>
+            <option value="" disabled>
+              - Select -
+            </option>
+            {hearAboutOptions.map((h) => (
+              <option key={h} value={h}>
+                {h}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {/* consent */}
+      <label className="mt-6 flex items-start gap-3 text-sm font-semibold text-azure-700">
+        <input type="checkbox" name="smsConsent" value="yes" className="check-retro mt-0.5" />
+        I agree to get text messages from Cornerstone about my quote and project.
+      </label>
+      <p className="mt-2 text-[11px] leading-relaxed text-azure-700/60 italic">
+        By submitting, you authorize Cornerstone Site Services to reach out via phone,
+        email, or text about your project needs. We never share your personal
+        information with 3rd parties. Opt out at any time. Message/data rates apply.
+        Consent is not a condition of purchase.
+      </p>
+
+      <button
+        type="submit"
+        disabled={status === "sending"}
+        className="btn-retro mt-6 w-full rounded-xl bg-pink-300 py-4 text-2xl text-azure-800 disabled:cursor-wait disabled:opacity-60"
+      >
+        {status === "sending" ? "Sending…" : "Submit"}
+      </button>
+      {status === "error" && (
+        <p role="alert" className="mt-3 text-center text-sm font-bold text-pink-500">
+          Something went wrong — please try again, or text your photos to{" "}
+          <a href={`sms:${site.phone}`} className="underline">{site.phoneDisplay}</a>.
+        </p>
+      )}
+      <p className="mt-3 text-center text-xs font-semibold text-azure-700/60">
+        Prefer texting? Send photos straight to{" "}
+        <a href={`sms:${site.phone}`} className="text-azure-500 underline underline-offset-2">
+          {site.phoneDisplay}
+        </a>
+        .
+      </p>
+    </form>
   );
 }

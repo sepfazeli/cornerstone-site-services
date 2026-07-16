@@ -1,9 +1,9 @@
 import Hero from "@/components/Hero";
 import TrustMarquee from "@/components/TrustMarquee";
 import Services from "@/components/Services";
+import Promise from "@/components/Promise";
 import BeforeAfter from "@/components/BeforeAfter";
 import Plans from "@/components/Plans";
-import QuoteForm from "@/components/QuoteForm";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
 import { faqs } from "@/lib/site";
@@ -28,9 +28,9 @@ export default function Home() {
       <Hero />
       <TrustMarquee />
       <Services />
+      <Promise />
       <BeforeAfter />
       <Plans />
-      <QuoteForm />
       <Testimonials />
       <FAQ />
     </>

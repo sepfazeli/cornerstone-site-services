@@ -44,16 +44,16 @@ export function Logo({
 }) {
   return (
     <span className={`inline-flex items-center gap-3 ${className}`}>
-      <LogoMark className="h-10 w-auto shrink-0 text-clay-500" />
+      <LogoMark className="h-10 w-auto shrink-0 text-azure-500" />
       <span className="flex flex-col leading-none">
-        <span className="font-display text-lg font-bold tracking-wide text-clay-600">
+        <span className="display-flat text-xl font-bold tracking-wide text-azure-500">
           CORNERSTONE
         </span>
-        <span className="mt-1 text-[0.6rem] font-medium tracking-[0.42em] text-clay-500">
+        <span className="mt-1 text-[0.6rem] font-bold tracking-[0.42em] text-pink-500">
           SITE SERVICES
         </span>
         {!compact && (
-          <span className="mt-1 text-[0.5rem] tracking-[0.18em] text-espresso-700/70 uppercase">
+          <span className="mt-1 text-[0.5rem] font-semibold tracking-[0.18em] text-azure-700/80 uppercase">
             Exterior Cleaning · Auto Detailing
           </span>
         )}

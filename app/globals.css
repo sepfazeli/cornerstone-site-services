@@ -1,28 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  --color-cream-50: #fbf7ee;
-  --color-cream-100: #f5edda;
-  --color-cream-200: #ecdfc2;
-  --color-cream-300: #e0cda3;
+  /* cream paper background */
+  --color-cream-50: #f7f3ea;
+  --color-cream-100: #f1eadb;
+  --color-cream-200: #e8dfc9;
 
-  --color-clay-200: #e3b5a2;
-  --color-clay-300: #d1937c;
-  --color-clay-400: #bc7259;
-  --color-clay-500: #a65a43;
-  --color-clay-600: #8f4936;
-  --color-clay-700: #763a2b;
+  /* vice azure — the text color */
+  --color-azure-300: #55bfff;
+  --color-azure-400: #21acff;
+  --color-azure-500: #009bf2;
+  --color-azure-600: #0080d1;
+  --color-azure-700: #0068ab;
+  --color-azure-800: #00537f;
 
-  --color-espresso-700: #5c3a2e;
-  --color-espresso-800: #45291f;
-  --color-espresso-900: #2f1b14;
-  --color-espresso-950: #221310;
+  /* vice pink — the border color */
+  --color-pink-100: #fce3e6;
+  --color-pink-200: #f9cdd2;
+  --color-pink-300: #f5b2ba;
+  --color-pink-400: #f096a1;
+  --color-pink-500: #e97787;
 
-  --font-display: var(--font-playfair);
-  --font-sans: var(--font-inter);
+  --font-display: var(--font-squada);
+  --font-sans: var(--font-archivo);
 
-  --animate-marquee: marquee 36s linear infinite;
+  --animate-marquee: marquee 32s linear infinite;
   --animate-kenburns: kenburns 22s ease-out forwards;
+  --animate-sway: sway 6s ease-in-out infinite;
   --animate-float: float 7s ease-in-out infinite;
 
   @keyframes marquee {
@@ -32,6 +36,10 @@
   @keyframes kenburns {
     from { transform: scale(1.12) translateY(-1.5%); }
     to { transform: scale(1) translateY(0); }
+  }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-2.5deg); }
+    50% { transform: rotate(2.5deg); }
   }
   @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -45,14 +53,61 @@ html {
 
 body {
   background: var(--color-cream-50);
-  color: var(--color-espresso-900);
+  color: var(--color-azure-700);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--color-clay-500);
+  background: var(--color-azure-500);
   color: var(--color-cream-50);
+}
+
+/* ---- retro display headline: azure fill, hard pink shadow ---- */
+.display {
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.94;
+  color: var(--color-azure-500);
+  text-shadow:
+    0.05em 0.05em 0 var(--color-pink-300),
+    0.07em 0.07em 0 rgba(0, 104, 171, 0.12);
+}
+.display-flat {
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ---- sticker card: thick pink border + hard offset shadow ---- */
+.sticker {
+  border: 3px solid var(--color-pink-300);
+  border-radius: 1.25rem;
+  box-shadow: 6px 6px 0 0 var(--color-pink-200);
+}
+.sticker-blue {
+  border: 3px solid var(--color-azure-500);
+  border-radius: 1.25rem;
+  box-shadow: 6px 6px 0 0 var(--color-pink-300);
+}
+
+/* ---- chunky retro button ---- */
+.btn-retro {
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 3px solid var(--color-azure-600);
+  box-shadow: 4px 4px 0 0 var(--color-azure-600);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+}
+.btn-retro:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 0 var(--color-azure-600);
+}
+.btn-retro:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--color-azure-600);
 }
 
 /* ---- scroll reveal ---- */
@@ -77,6 +132,7 @@ body {
   }
   .animate-kenburns,
   .animate-marquee,
+  .animate-sway,
   .animate-float {
     animation: none !important;
   }
@@ -85,38 +141,16 @@ body {
   }
 }
 
-/* ---- button sheen ---- */
-.btn-sheen {
-  position: relative;
-  overflow: hidden;
-}
-.btn-sheen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 60%
-  );
-  transform: translateX(-120%);
-  transition: transform 0.7s ease;
-}
-.btn-sheen:hover::after {
-  transform: translateX(120%);
-}
-
 /* ---- fancy underline ---- */
 .link-line {
   background-image: linear-gradient(currentColor, currentColor);
-  background-size: 0% 1px;
+  background-size: 0% 2px;
   background-repeat: no-repeat;
   background-position: 0 100%;
   transition: background-size 0.35s ease;
 }
 .link-line:hover {
-  background-size: 100% 1px;
+  background-size: 100% 2px;
 }
 
 /* ---- before/after handle ---- */
@@ -124,12 +158,37 @@ body {
   clip-path: inset(0 calc(100% - var(--ba, 50%)) 0 0);
 }
 
-/* ---- grain texture ---- */
-.grain::before {
+/* ---- retro checkbox ---- */
+.check-retro {
+  appearance: none;
+  width: 1.35rem;
+  height: 1.35rem;
+  flex-shrink: 0;
+  border: 3px solid var(--color-pink-400);
+  border-radius: 0.4rem;
+  background: var(--color-cream-50);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.check-retro::before {
   content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  width: 0.62rem;
+  height: 0.62rem;
+  transform: scale(0);
+  transition: transform 0.15s ease;
+  background: var(--color-cream-50);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+.check-retro:checked {
+  background: var(--color-azure-500);
+  border-color: var(--color-azure-500);
+}
+.check-retro:checked::before {
+  transform: scale(1);
+}
+.check-retro:focus-visible {
+  outline: 3px solid var(--color-azure-300);
+  outline-offset: 2px;
 }

@@ -5,6 +5,8 @@ export const runtime = "nodejs";
 // Email attachments are capped well below the platform request limit.
 const MAX_ATTACH_BYTES = 3 * 1024 * 1024;
 
+const DEFAULT_INBOX = "cstone.services.co@gmail.com";
+
 export async function POST(req: Request) {
   let form: FormData;
   try {
@@ -28,9 +30,12 @@ export async function POST(req: Request) {
     name,
     phone,
     email: field("email"),
-    area: field("area"),
+    address: field("address"),
+    zip: field("zip"),
     services: field("services"),
-    plan: field("plan"),
+    frequency: field("frequency"),
+    hearAbout: field("hearAbout"),
+    smsConsent: field("smsConsent") === "yes" ? "yes" : "no",
     slot: [field("slotDay"), field("slotTime")].filter(Boolean).join(" at ") || "none requested",
     notes: field("notes"),
     photoCount: photos.length,
@@ -40,8 +45,8 @@ export async function POST(req: Request) {
   console.log("[quote-request]", JSON.stringify(summary));
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.QUOTE_INBOX_EMAIL;
-  if (apiKey && to) {
+  const to = process.env.QUOTE_INBOX_EMAIL ?? DEFAULT_INBOX;
+  if (apiKey) {
     try {
       let attachTotal = 0;
       const attachments: { filename: string; content: string }[] = [];
@@ -57,10 +62,12 @@ export async function POST(req: Request) {
         <h2>New quote request — ${summary.name}</h2>
         <p><b>Phone:</b> ${summary.phone}<br/>
         <b>Email:</b> ${summary.email || "—"}<br/>
-        <b>Area:</b> ${summary.area}<br/>
+        <b>Address:</b> ${summary.address} · ${summary.zip}<br/>
         <b>Services:</b> ${summary.services}<br/>
-        <b>Plan:</b> ${summary.plan}<br/>
+        <b>Frequency:</b> ${summary.frequency}<br/>
         <b>Requested slot:</b> ${summary.slot}<br/>
+        <b>Heard about us via:</b> ${summary.hearAbout}<br/>
+        <b>SMS consent:</b> ${summary.smsConsent}<br/>
         <b>Photos:</b> ${summary.photoCount} uploaded${attachments.length < photos.length ? " (some too large to attach)" : ""}</p>
         <p>${summary.notes || ""}</p>`;
       const res = await fetch("https://api.resend.com/emails", {
@@ -70,7 +77,7 @@ export async function POST(req: Request) {
           from: process.env.QUOTE_FROM_EMAIL ?? "quotes@cornerstonesiteservices.com",
           to: [to],
           reply_to: summary.email || undefined,
-          subject: `Quote request: ${summary.name} · ${summary.area} · ${summary.services}`,
+          subject: `Quote request: ${summary.name} · ${summary.zip} · ${summary.services}`,
           html,
           attachments,
         }),

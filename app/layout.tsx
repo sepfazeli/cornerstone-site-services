@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Squada_One, Archivo } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StickyCall from "@/components/StickyCall";
 import { site, serviceAreas } from "@/lib/site";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const squada = Squada_One({
+  variable: "--font-squada",
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
   display: "swap",
 });
@@ -21,20 +22,22 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Cornerstone Site Services | Pressure Washing & Auto Detailing in Los Angeles",
+    default: "Cornerstone Site Services | Power Washing & Auto Detailing in Orange County",
     template: "%s | Cornerstone Site Services",
   },
   description: site.description,
   keywords: [
-    "pressure washing Los Angeles",
-    "power washing LA",
-    "house soft wash Los Angeles",
-    "driveway cleaning Los Angeles",
-    "mobile auto detailing Los Angeles",
-    "car detailing near me",
+    "power washing Orange County",
+    "pressure washing Irvine",
+    "window cleaning Orange County",
+    "roof washing Orange County",
+    "gutter cleaning Newport Beach",
+    "solar panel cleaning Orange County",
+    "house washing Orange County",
+    "holiday lights installation Orange County",
+    "mobile auto detailing Orange County",
+    "paver resanding",
     "exterior cleaning subscription",
-    "patio cleaning Los Angeles",
-    "commercial pressure washing LA",
   ],
   alternates: { canonical: "/" },
   openGraph: {
@@ -42,13 +45,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: site.url,
     siteName: site.name,
-    title: "Cornerstone Site Services — Pressure Washing & Auto Detailing, Los Angeles",
+    title: "Cornerstone Site Services — Power Washing & Auto Detailing, Orange County",
     description: site.description,
-    images: [{ url: "/images/home-2.jpg", width: 1600, height: 1067, alt: "Freshly washed Los Angeles home at dusk" }],
+    images: [{ url: "/images/home-2.jpg", width: 1600, height: 1067, alt: "Freshly washed Orange County home" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cornerstone Site Services — LA Exterior Cleaning & Auto Detailing",
+    title: "Cornerstone Site Services — Orange County Exterior Cleaning & Auto Detailing",
     description: site.description,
     images: ["/images/home-2.jpg"],
   },
@@ -85,9 +88,11 @@ const jsonLd = {
     },
   ],
   makesOffer: [
-    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Pressure Washing & Exterior Soft Wash" } },
+    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Power Washing & House Washing" } },
+    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Window, Gutter & Roof Cleaning" } },
+    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Solar Panel Cleaning" } },
     { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobile Auto Detailing" } },
-    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Subscription Exterior Care Plans" } },
+    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Holiday Light Installation" } },
   ],
 };
 
@@ -97,7 +102,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${squada.variable} ${archivo.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <script
           type="application/ld+json"

@@ -37,7 +37,7 @@ function Slider({ src, alt }: { src: string; alt: string }) {
         if (e.buttons > 0) move(e.clientX);
       }}
       onDragStart={(e) => e.preventDefault()}
-      className="group relative aspect-[4/3] cursor-ew-resize touch-pan-y overflow-hidden rounded-3xl border border-clay-500/20 shadow-xl shadow-espresso-900/10 select-none"
+      className="sticker group relative aspect-[4/3] cursor-ew-resize touch-pan-y overflow-hidden bg-cream-100 select-none"
       style={{ "--ba": `${pos}%` } as React.CSSProperties}
     >
       {/* AFTER (base) */}
@@ -63,15 +63,15 @@ function Slider({ src, alt }: { src: string; alt: string }) {
       </div>
       {/* handle */}
       <div className="pointer-events-none absolute inset-y-0" style={{ left: `${pos}%` }}>
-        <div className="absolute inset-y-0 -ml-px w-0.5 bg-cream-50/90" />
-        <div className="absolute top-1/2 -ml-6 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-cream-50/60 bg-espresso-900/70 text-cream-50 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+        <div className="absolute inset-y-0 -ml-px w-1 bg-pink-300" />
+        <div className="absolute top-1/2 -ml-6 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border-3 border-pink-300 bg-azure-500 text-cream-50 transition-transform duration-300 group-hover:scale-110">
           <span className="text-sm tracking-tighter">◂▸</span>
         </div>
       </div>
-      <span className="absolute top-4 left-4 rounded-full bg-espresso-950/70 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-cream-100 uppercase backdrop-blur-sm">
+      <span className="display-flat absolute top-4 left-4 rounded-lg border-2 border-pink-300 bg-azure-600/85 px-3 py-1 text-sm tracking-[0.2em] text-cream-50 uppercase">
         Before
       </span>
-      <span className="absolute top-4 right-4 rounded-full bg-clay-500/90 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-cream-50 uppercase">
+      <span className="display-flat absolute top-4 right-4 rounded-lg border-2 border-azure-600 bg-pink-300 px-3 py-1 text-sm tracking-[0.2em] text-azure-800 uppercase">
         After
       </span>
     </div>
@@ -79,34 +79,34 @@ function Slider({ src, alt }: { src: string; alt: string }) {
 }
 
 const examples = [
-  { src: "/images/garden-steps.jpg", alt: "Stone garden steps and hardscape", label: "Hardscape & garden paths · Pasadena" },
-  { src: "/images/detail-droplets.jpg", alt: "White car paintwork with water beading", label: "Exterior detail & sealant · Santa Monica" },
+  { src: "/images/garden-steps.jpg", alt: "Stone garden steps and hardscape", label: "Hardscape & garden paths · Mission Viejo" },
+  { src: "/images/detail-droplets.jpg", alt: "White car paintwork with water beading", label: "Exterior detail & sealant · Newport Beach" },
 ];
 
 export default function BeforeAfter() {
   return (
-    <section id="results" className="relative scroll-mt-24 overflow-hidden bg-espresso-900 py-24 lg:py-32">
-      <div className="grain absolute inset-0" aria-hidden />
+    <section id="results" className="relative scroll-mt-24 overflow-hidden bg-pink-100 py-20 lg:py-28">
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
         <Reveal>
-          <p className="text-xs font-semibold tracking-[0.3em] text-clay-300 uppercase">
+          <p className="text-xs font-bold tracking-[0.3em] text-pink-500 uppercase">
             Drag to see the difference
           </p>
-          <h2 className="mt-3 max-w-2xl font-display text-4xl font-semibold leading-tight text-cream-50 sm:text-5xl">
-            Proof you can <em className="text-clay-300">slide</em>.
+          <h2 className="display mt-2 max-w-2xl text-5xl sm:text-6xl">
+            Proof you can slide
           </h2>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-cream-100/80">
+          <p className="mt-4 max-w-2xl text-lg font-semibold leading-relaxed">
             Years of sun, grime and salt air disappear in a single visit. Drag the
-            handle — this is what your surfaces are hiding. <span className="text-cream-100/50 text-sm">(Illustrative comparison.)</span>
+            handle — this is what your surfaces are hiding.{" "}
+            <span className="text-sm text-azure-700/60">(Illustrative comparison.)</span>
           </p>
         </Reveal>
 
-        <div className="mt-14 grid gap-8 lg:grid-cols-2">
+        <div className="mt-12 grid gap-10 lg:grid-cols-2">
           {examples.map((ex, i) => (
             <Reveal key={ex.src} delay={i * 150}>
               <figure>
                 <Slider src={ex.src} alt={ex.alt} />
-                <figcaption className="mt-4 text-sm tracking-wide text-cream-100/70">
+                <figcaption className="mt-4 text-sm font-bold tracking-wide uppercase">
                   {ex.label}
                 </figcaption>
               </figure>

@@ -4,89 +4,147 @@ export const site = {
   tagline: "One call. Everything handled.",
   phone: "+19499941833",
   phoneDisplay: "(949) 994-1833",
-  email: "hello@cornerstonesiteservices.com",
+  email: "cstone.services.co@gmail.com",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://cornerstone-site-services.vercel.app",
-  city: "Los Angeles",
+  city: "Orange County",
   region: "CA",
   description:
-    "Los Angeles pressure washing, exterior soft washing, and mobile auto detailing. Subscription care plans or one-time deep cleans — send photos, get a quote in hours, book a time slot online.",
+    "Orange County exterior cleaning and auto detailing: power washing, window cleaning, roof & gutter care, solar panel cleaning, holiday lights and more. Send photos, get a quote in hours, book a time slot online.",
 } as const;
 
 export const serviceAreas = [
-  "Los Angeles",
-  "Santa Monica",
-  "Beverly Hills",
-  "Pasadena",
-  "Culver City",
-  "West Hollywood",
-  "Sherman Oaks",
-  "Burbank",
-  "Glendale",
-  "Manhattan Beach",
-  "Long Beach",
   "Irvine",
   "Newport Beach",
-  "Orange County",
+  "Costa Mesa",
+  "Huntington Beach",
+  "Laguna Beach",
+  "Anaheim",
+  "Santa Ana",
+  "Tustin",
+  "Orange",
+  "Mission Viejo",
+  "Lake Forest",
+  "Fountain Valley",
+  "Yorba Linda",
+  "San Clemente",
 ] as const;
 
 export type ServiceKey =
-  | "house-soft-wash"
-  | "driveway-hardscape"
-  | "patio-landscape"
+  | "power-washing"
+  | "window-cleaning"
+  | "roof-washing"
+  | "gutter-cleaning"
+  | "solar-cleaning"
+  | "house-washing"
+  | "holiday-lights"
   | "auto-detailing"
-  | "windows-gutters"
-  | "commercial";
+  | "screen-cleaning"
+  | "skylight-cleaning"
+  | "paver-resanding"
+  | "lawn-care";
 
 export const services: {
   key: ServiceKey;
   title: string;
   short: string;
-  image: string;
-  bullets: string[];
 }[] = [
   {
-    key: "house-soft-wash",
-    title: "House & Facade Soft Wash",
-    short: "Low-pressure wash that lifts grime, algae and salt haze off stucco, siding and stone — without etching the finish.",
-    image: "/images/home-1.jpg",
-    bullets: ["Stucco, siding, brick & stone", "Algae, mold & mildew removal", "Paint-safe detergents"],
+    key: "power-washing",
+    title: "Power Washing",
+    short: "Driveways, patios, walkways and hardscape — oil stains, tire marks and grime blasted clean.",
   },
   {
-    key: "driveway-hardscape",
-    title: "Driveways & Hardscape",
-    short: "High-pressure surface cleaning for concrete, pavers and walkways. Oil stains, tire marks and gum — gone.",
-    image: "/images/street-clean.jpg",
-    bullets: ["Concrete & paver restoration", "Oil & rust stain treatment", "Optional sealing"],
+    key: "window-cleaning",
+    title: "Window Cleaning",
+    short: "Streak-free glass inside and out, tracks and sills included.",
   },
   {
-    key: "patio-landscape",
-    title: "Patios & Outdoor Living",
-    short: "Decks, pergolas, pool surrounds, outdoor kitchens and garden hardscape — ready for guests year-round.",
-    image: "/images/patio.jpg",
-    bullets: ["Decks & pool decks", "Outdoor furniture & BBQ areas", "Garden paths & retaining walls"],
+    key: "roof-washing",
+    title: "Roof Washing",
+    short: "Gentle soft-wash that lifts algae and staining without damaging shingles or tile.",
+  },
+  {
+    key: "gutter-cleaning",
+    title: "Gutter Cleaning",
+    short: "Cleared, flushed and flowing — protecting your roofline and foundation.",
+  },
+  {
+    key: "solar-cleaning",
+    title: "Solar Panel Cleaning",
+    short: "Deionized-water cleaning that restores lost output from dusty panels.",
+  },
+  {
+    key: "house-washing",
+    title: "House Washing",
+    short: "Low-pressure facade wash for stucco, siding and stone. Paint-safe detergents.",
+  },
+  {
+    key: "holiday-lights",
+    title: "Holiday Lights",
+    short: "Design, install, maintain and take-down. You pick the look, we handle the ladder.",
   },
   {
     key: "auto-detailing",
     title: "Auto Detailing",
-    short: "Showroom-level interior and exterior detailing at your home or office. Hand wash, machine polish, ceramic options.",
-    image: "/images/detail-wax.jpg",
-    bullets: ["Interior deep clean & extraction", "Hand wash, clay & polish", "Ceramic coating packages"],
+    short: "Showroom-level interior and exterior detailing in your driveway — hand wash to ceramic.",
   },
   {
-    key: "windows-gutters",
-    title: "Windows & Gutters",
-    short: "Streak-free window washing and gutter clearing that protects your roofline and foundation.",
-    image: "/images/home-3.jpg",
-    bullets: ["Interior / exterior glass", "Gutter clearing & flush", "Solar panel rinse"],
+    key: "screen-cleaning",
+    title: "Screen Cleaning",
+    short: "Window and door screens de-gunked, washed and re-seated.",
   },
   {
-    key: "commercial",
-    title: "Commercial & HOA",
-    short: "Storefronts, parking structures, common areas and fleets on a schedule your tenants will notice.",
-    image: "/images/wash-action.jpg",
-    bullets: ["Storefront & sidewalk programs", "Parking & trash enclosures", "Fleet washing"],
+    key: "skylight-cleaning",
+    title: "Skylight Cleaning",
+    short: "Roof-access glass cleaning that brings the light back in.",
+  },
+  {
+    key: "paver-resanding",
+    title: "Paver Resanding",
+    short: "Joint sand replaced and compacted after washing — pavers locked tight, weeds out.",
+  },
+  {
+    key: "lawn-care",
+    title: "Basic Lawn Care",
+    short: "Mow, edge and tidy on your cleaning schedule. Curb appeal, handled.",
   },
 ];
+
+export const frequencies = [
+  "One-time",
+  "Weekly",
+  "Bi-weekly",
+  "Monthly",
+  "Quarterly",
+  "Twice a year",
+] as const;
+
+export const hearAboutOptions = [
+  "Google search",
+  "Instagram / TikTok",
+  "Friend or neighbor",
+  "Yard sign / truck",
+  "Nextdoor",
+  "Other",
+] as const;
+
+export const promise = [
+  {
+    n: "01",
+    title: "We show up on time",
+    body: "Which really means 10 minutes early. You get a text when we're on the way, and a crew that looks and acts professional.",
+  },
+  {
+    n: "02",
+    title: "We do what we said",
+    body: "The quote you approved is the price you pay. Every item on the work order gets done, checked and photographed.",
+  },
+  {
+    n: "03",
+    title: "We leave it better",
+    body: "Gear packed, gates closed, plants rinsed, and a property that honestly looks brand new. That's the whole point.",
+  },
+] as const;
 
 export const plans = [
   {
@@ -94,23 +152,23 @@ export const plans = [
     price: "from $249",
     cadence: "single visit",
     highlight: false,
-    blurb: "The full reset. Every exterior surface deep cleaned in one visit — perfect before listings, events or a new care plan.",
+    blurb: "The full reset. Every surface you pick, deep cleaned in one visit — perfect before listings, events or a new care plan.",
     features: [
       "Full property assessment",
-      "House, driveway & patio deep wash",
+      "Any services bundled into one visit",
       "Photo report before / after",
       "7-day rain re-touch guarantee",
     ],
   },
   {
-    name: "Estate Care Plan",
+    name: "Care Plan",
     price: "from $149/mo",
     cadence: "monthly or quarterly",
     highlight: true,
     blurb: "Our signature subscription. We keep the whole property spotless on a schedule — you never think about it again.",
     features: [
       "Deep clean first visit, upkeep after",
-      "Rotating focus: facade, hardscape, glass",
+      "Rotating focus: windows, wash, gutters",
       "Priority scheduling & storm callouts",
       "Pause or cancel anytime",
     ],
@@ -133,53 +191,47 @@ export const plans = [
 export const testimonials = [
   {
     name: "Melissa R.",
-    area: "Pacific Palisades",
+    area: "Newport Beach",
     text: "They sent a quote two hours after I texted photos of our driveway and pool deck. Crew showed up Saturday 8am sharp — the travertine looks brand new.",
-    service: "Driveway & pool deck",
+    service: "Power washing",
   },
   {
     name: "David K.",
-    area: "Sherman Oaks",
-    text: "We're on the monthly plan for the house and both cars. It's the one subscription my wife refuses to cancel. The house literally glows at sunset.",
-    service: "Estate Care Plan",
+    area: "Irvine",
+    text: "We're on the monthly plan for the house, windows and both cars. It's the one subscription my wife refuses to cancel.",
+    service: "Care Plan",
   },
   {
     name: "Priya S.",
-    area: "Culver City",
-    text: "Our HOA switched to Cornerstone for the walkways and parking structure. Same-week booking, photo reports for the board, zero complaints since.",
-    service: "Commercial / HOA",
-  },
-  {
-    name: "Jonah T.",
-    area: "Manhattan Beach",
-    text: "Ceramic coating on the M4 plus interior extraction on the family SUV, done in my driveway while I worked. Flawless finish, zero swirl marks.",
-    service: "Auto detailing",
+    area: "Tustin",
+    text: "Our HOA switched to Cornerstone for the walkways and gutters. Same-week booking, photo reports for the board, zero complaints since.",
+    service: "HOA / gutters",
   },
 ] as const;
 
 export const faqs = [
   {
     q: "How does the photo quote work?",
-    a: "Snap 3–5 photos of the areas you want cleaned (driveway, facade, patio, car) and upload them with our quote form — or text them straight to (949) 994-1833. We size the job from the photos and reply with a firm quote, usually within 2 business hours. No site visit, no waiting around.",
+    a: "Snap 3–5 photos of the areas you want cleaned (driveway, windows, roof, car) and upload them with our quote form — or text them straight to (949) 994-1833. We size the job from the photos and reply with a firm quote, usually within 2 business hours. No site visit, no waiting around.",
   },
   {
-    q: "What's the difference between the subscription and a one-time deep clean?",
-    a: "A one-time deep clean is a full reset of your property in a single visit. Subscriptions start with that same deep clean, then keep everything maintained on a monthly or quarterly rotation at a lower per-visit rate — with priority scheduling and storm callouts included.",
+    q: "Which areas do you serve?",
+    a: "We're Orange County based and cover the whole county — Irvine, Newport Beach, Costa Mesa, Huntington Beach, Anaheim, Mission Viejo, San Clemente and everywhere between. Not sure? Send your zip with the quote form.",
   },
   {
-    q: "Which areas of Los Angeles do you serve?",
-    a: "We cover greater Los Angeles and northern Orange County — Santa Monica, Beverly Hills, Pasadena, Culver City, Sherman Oaks, Burbank, Long Beach, Manhattan Beach, Irvine, Newport Beach and everywhere between. Not sure? Send your zip with the quote form.",
+    q: "What's the difference between one-time and a care plan?",
+    a: "A one-time deep clean is a full reset in a single visit. Care plans start with that same deep clean, then keep everything maintained on a schedule you pick — weekly to quarterly — at a lower per-visit rate, with priority scheduling included.",
   },
   {
-    q: "Is pressure washing safe for my stucco, pavers and plants?",
-    a: "Yes — we match the method to the surface. Delicate facades get low-pressure soft washing with biodegradable detergents, hardscape gets calibrated surface cleaners, and we pre-soak and rinse landscaping so plants are protected.",
+    q: "Is washing safe for my roof, stucco and plants?",
+    a: "Yes — we match the method to the surface. Roofs and facades get low-pressure soft washing with biodegradable detergents, hardscape gets calibrated surface cleaners, and we pre-soak and rinse landscaping so plants are protected.",
   },
   {
     q: "Do you really detail cars at my home?",
-    a: "We do. Our detailing rigs carry water and power, so we work in your driveway or office parking. Interior deep cleans, hand wash and polish, and ceramic coating packages — without you driving anywhere.",
+    a: "We do. Our rigs carry water and power, so we work in your driveway or office parking. Interior deep cleans, hand wash and polish, and ceramic packages — without you driving anywhere.",
   },
   {
     q: "What happens after I book a time slot?",
-    a: "Your slot is reserved as a request the moment you submit. We confirm by text within 2 business hours with your quote attached. If the slot no longer fits, you approve the next best one — nothing is charged until the work is scheduled and approved.",
+    a: "Your slot is reserved as a request the moment you submit. We confirm by text within 2 business hours with your quote attached. Nothing is charged until the work is scheduled and approved.",
   },
 ] as const;
