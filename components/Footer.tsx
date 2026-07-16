@@ -36,7 +36,6 @@ export default function Footer() {
             <ul className="mt-4 space-y-2.5 text-sm font-bold">
               {[
                 ["/#services", "Services"],
-                ["/#results", "Before & After"],
                 ["/#plans", "Care Plans"],
                 ["/pressure-washing", "Power Washing OC"],
                 ["/auto-detailing", "Mobile Auto Detailing OC"],

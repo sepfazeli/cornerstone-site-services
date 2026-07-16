@@ -7,7 +7,6 @@ import { site } from "@/lib/site";
 
 const nav = [
   { href: "/#services", label: "Services" },
-  { href: "/#results", label: "Results" },
   { href: "/#plans", label: "Plans" },
   { href: "/pressure-washing", label: "Power Washing" },
   { href: "/auto-detailing", label: "Auto Detailing" },

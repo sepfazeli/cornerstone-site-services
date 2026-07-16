@@ -153,11 +153,6 @@ body {
   background-size: 100% 2px;
 }
 
-/* ---- before/after handle ---- */
-.ba-clip {
-  clip-path: inset(0 calc(100% - var(--ba, 50%)) 0 0);
-}
-
 /* ---- retro checkbox ---- */
 .check-retro {
   appearance: none;
