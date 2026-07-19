@@ -9,7 +9,7 @@ export const site = {
   city: "Orange County",
   region: "CA",
   description:
-    "Orange County exterior cleaning and auto detailing: power washing, window cleaning, roof & gutter care, solar panel cleaning, holiday lights and more. Send photos, get a quote in hours, book a time slot online.",
+    "Orange County exterior cleaning: power washing, window cleaning, roof & gutter care, solar panel cleaning, holiday lights and more. Send photos, get a quote in hours, book a time slot online.",
 } as const;
 
 export const serviceAreas = [
@@ -37,7 +37,6 @@ export type ServiceKey =
   | "solar-cleaning"
   | "house-washing"
   | "holiday-lights"
-  | "auto-detailing"
   | "screen-cleaning"
   | "skylight-cleaning"
   | "paver-resanding"
@@ -82,11 +81,6 @@ export const services: {
     key: "holiday-lights",
     title: "Holiday Lights",
     short: "Design, install, maintain and take-down. You pick the look, we handle the ladder.",
-  },
-  {
-    key: "auto-detailing",
-    title: "Auto Detailing",
-    short: "Showroom-level interior and exterior detailing in your driveway — hand wash to ceramic.",
   },
   {
     key: "screen-cleaning",
@@ -164,19 +158,6 @@ export const plans = [
       "Pause or cancel anytime",
     ],
   },
-  {
-    name: "Auto Care Membership",
-    price: "from $99/mo",
-    cadence: "2 visits / month",
-    highlight: false,
-    blurb: "Mobile detailing on repeat. Your cars stay showroom-clean at home — interior refresh plus hand wash every visit.",
-    features: [
-      "We come to your driveway",
-      "Interior wipe-down & vacuum",
-      "Hand wash, wheels & dressing",
-      "Quarterly polish upgrade included",
-    ],
-  },
 ] as const;
 
 export const testimonials = [
@@ -189,7 +170,7 @@ export const testimonials = [
   {
     name: "David K.",
     area: "Irvine",
-    text: "We're on the monthly plan for the house, windows and both cars. It's the one subscription my wife refuses to cancel.",
+    text: "We're on the monthly plan for the house, windows and gutters. It's the one subscription my wife refuses to cancel.",
     service: "Care Plan",
   },
   {

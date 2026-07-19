@@ -38,7 +38,6 @@ export default function Footer() {
                 ["/#services", "Services"],
                 ["/#plans", "Care Plans"],
                 ["/pressure-washing", "Power Washing OC"],
-                ["/auto-detailing", "Mobile Auto Detailing OC"],
                 ["/#quote", "Photo Quote & Booking"],
               ].map(([href, label]) => (
                 <li key={href}>

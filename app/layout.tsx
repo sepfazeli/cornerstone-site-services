@@ -22,7 +22,7 @@ const archivo = Archivo({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Cornerstone Site Services | Power Washing & Auto Detailing in Orange County",
+    default: "Cornerstone Site Services | Power Washing & Exterior Cleaning in Orange County",
     template: "%s | Cornerstone Site Services",
   },
   description: site.description,
@@ -35,7 +35,6 @@ export const metadata: Metadata = {
     "solar panel cleaning Orange County",
     "house washing Orange County",
     "holiday lights installation Orange County",
-    "mobile auto detailing Orange County",
     "paver resanding",
     "exterior cleaning subscription",
   ],
@@ -45,13 +44,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: site.url,
     siteName: site.name,
-    title: "Cornerstone Site Services — Power Washing & Auto Detailing, Orange County",
+    title: "Cornerstone Site Services — Power Washing & Exterior Cleaning, Orange County",
     description: site.description,
     images: [{ url: "/images/home-2.jpg", width: 1600, height: 1067, alt: "Freshly washed Orange County home" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cornerstone Site Services — Orange County Exterior Cleaning & Auto Detailing",
+    title: "Cornerstone Site Services — Orange County Exterior Cleaning",
     description: site.description,
     images: ["/images/home-2.jpg"],
   },
@@ -91,7 +90,6 @@ const jsonLd = {
     { "@type": "Offer", itemOffered: { "@type": "Service", name: "Power Washing & House Washing" } },
     { "@type": "Offer", itemOffered: { "@type": "Service", name: "Window, Gutter & Roof Cleaning" } },
     { "@type": "Offer", itemOffered: { "@type": "Service", name: "Solar Panel Cleaning" } },
-    { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobile Auto Detailing" } },
     { "@type": "Offer", itemOffered: { "@type": "Service", name: "Holiday Light Installation" } },
   ],
 };

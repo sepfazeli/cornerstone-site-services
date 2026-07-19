@@ -24,12 +24,11 @@ export function LogoMark({ className = "" }: { className?: string }) {
       </g>
       {/* divider */}
       <line x1="30" y1="53" x2="70" y2="53" stroke={STROKE} strokeWidth="2" />
-      {/* car */}
-      <g stroke={STROKE} strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round">
-        <path d="M28 76 L32 68 C33 66 35 65 37 65 L61 65 C63 65 65 66 66 68 L72 76 L75 77 C76 77.4 77 78.6 77 80 L77 84 L23 84 L23 80 C23 78.6 24 77.4 25 77 Z" />
-        <path d="M36 76 L64 76" />
-        <circle cx="37" cy="86" r="5" />
-        <circle cx="63" cy="86" r="5" />
+      {/* water waves */}
+      <g stroke={STROKE} strokeWidth="2.4" strokeLinecap="round" fill="none">
+        <path d="M28 66 C33 61 39 61 44 66 C49 71 55 71 60 66 C65 61 71 61 72 62" />
+        <path d="M28 76 C33 71 39 71 44 76 C49 81 55 81 60 76 C65 71 71 71 72 72" />
+        <path d="M32 86 C37 81 43 81 48 86 C53 91 59 91 64 86" />
       </g>
     </svg>
   );
@@ -54,7 +53,7 @@ export function Logo({
         </span>
         {!compact && (
           <span className="mt-1 text-[0.5rem] font-semibold tracking-[0.18em] text-azure-700/80 uppercase">
-            Exterior Cleaning · Auto Detailing
+            Exterior Cleaning · Orange County
           </span>
         )}
       </span>

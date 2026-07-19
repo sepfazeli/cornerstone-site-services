@@ -19,7 +19,7 @@ export default function Plans() {
         </p>
       </Reveal>
 
-      <div className="mt-12 grid gap-6 lg:grid-cols-3">
+      <div className="mx-auto mt-12 grid max-w-4xl gap-6 lg:grid-cols-2">
         {plans.map((p, i) => (
           <Reveal key={p.name} delay={i * 120}>
             <article

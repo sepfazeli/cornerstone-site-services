@@ -3,9 +3,9 @@ import Reveal from "./Reveal";
 
 const shots = [
   { src: "/images/patio.jpg", alt: "Clean patio with outdoor furniture", tilt: "-rotate-2" },
-  { src: "/images/detail-wheel.jpg", alt: "Freshly detailed wheel", tilt: "rotate-1" },
+  { src: "/images/home-1.jpg", alt: "Freshly washed home facade", tilt: "rotate-1" },
   { src: "/images/home-3.jpg", alt: "Washed house exterior with clean windows", tilt: "-rotate-1" },
-  { src: "/images/detail-sponge.jpg", alt: "Hand washing a car with foam", tilt: "rotate-2" },
+  { src: "/images/home-night.jpg", alt: "Home exterior glowing at night after a wash", tilt: "rotate-2" },
 ];
 
 export default function GalleryStrip() {

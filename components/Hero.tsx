@@ -34,8 +34,8 @@ export default function Hero() {
             <Reveal delay={120}>
               <div className="sticker relative aspect-[5/4] rotate-1 overflow-hidden bg-cream-100">
                 <Image
-                  src="/images/detail-wax.jpg"
-                  alt="Detailer polishing a car hood"
+                  src="/images/garden-steps.jpg"
+                  alt="Spotless stone steps and garden hardscape"
                   fill
                   sizes="22vw"
                   className="object-cover"

@@ -9,7 +9,6 @@ const nav = [
   { href: "/#services", label: "Services" },
   { href: "/#plans", label: "Plans" },
   { href: "/pressure-washing", label: "Power Washing" },
-  { href: "/auto-detailing", label: "Auto Detailing" },
 ];
 
 export default function Header() {
