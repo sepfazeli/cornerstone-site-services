@@ -2,6 +2,7 @@ import Image from "next/image";
 import Palm from "./Palm";
 import Reveal from "./Reveal";
 import QuoteForm from "./QuoteForm";
+import { Badge } from "./Logo";
 import { PhoneIcon } from "./Icons";
 import { site } from "@/lib/site";
 
@@ -25,6 +26,7 @@ export default function Hero() {
                 sizes="(min-width:1024px) 45vw, 92vw"
                 className="object-cover"
               />
+              <Badge className="absolute top-4 right-4 h-32 w-32 rotate-6 drop-shadow-[3px_4px_0_rgba(15,40,54,0.25)] lg:h-36 lg:w-36" />
               <span className="display-flat absolute bottom-4 left-4 rounded-lg border-2 border-azure-600 bg-pink-300 px-3 py-1 text-sm tracking-[0.18em] text-azure-800 uppercase">
                 Orange County, CA
               </span>
